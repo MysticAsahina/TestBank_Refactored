@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Test Bank System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f5f5f5;
+            --secondary-color: #060037;
+            --accent-color: #dcdf00;
+            --card-radius: 12px;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+            padding-top: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-body {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1800px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .center-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            margin-left: 5px;
+        }
+        
+        .ms-sm-auto {
+            margin:0 !important;
+            width: 100%;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            background: var(--primary-bg) !important;
+            width: 250px;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: slideInLeft 0.8s ease forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+            margin-right: 15px;
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .login-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .login-header img {
+            width: 70px;
+        }
+        
+        .login-header h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: var(--secondary-color);
+        }
+        
+        .login-header p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: var(--secondary-color) !important;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(6, 0, 55, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white !important;
+        }
+
+        /* Bottom menu items styling */
+        .bottom-menu {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .bottom-menu .nav-link {
+            margin-bottom: 8px;
+        }
+        
+        /* Top Navbar Styling */
+        .top-navbar {
+            background: var(--primary-bg) !important;
+            width: 100%;
+            border-radius: var(--card-radius);
+            padding: 15px 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: fadeFromBottom 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            margin-bottom: 20px;
+        }
+        
+        .navbar-brand {
+            color: var(--secondary-color) !important;
+            font-weight: 600;
+        }
+        
+        .navbar-text {
+            color: var(--secondary-color) !important;
+        }
+        
+        /* User Info in Top Bar */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Main Content Styling */
+        .main-content {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .section-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Card Styling */
+        .card {
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        /* Group Header Styling */
+        .group-header {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        /* File Card Styling */
+        .file-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .file-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        .file-icon.document { background-color: #3498db; }
+        .file-icon.image { background-color: #9b59b6; }
+        .file-icon.video { background-color: #e67e22; }
+        .file-icon.audio { background-color: #1abc9c; }
+        .file-icon.other { background-color: #95a5a6; }
+        
+        .file-actions .btn {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        /* Back Button */
+        .back-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #05002e;
+            color: white;
+            transform: translateX(-3px);
+        }
+        
+        /* Button Styling */
+        .btn {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #05002e;
+            border-color: #05002e;
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+                position: static;
+                height: auto;
+            }
+            
+            .center-body {
+                margin-left: 0;
+            }
+            
+            .top-navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .file-card .d-flex {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .file-icon {
+                margin: 0 auto 10px;
+            }
+            
+            .file-actions {
+                margin-top: 10px;
+                justify-content: center;
+            }
+        }
+
+        /* Logout Modal */
+        .logout-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .logout-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .logout-modal-header {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logout-modal-footer {
+            border-top: 1px solid #eaeaea;
+            padding-top: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-body">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <div class="login-header">
+                        <img src="/images/phinma_logo.png" alt="PHINMA Logo" class="me-2">
+                        <h2>PHINMA EDUCATION</h2>
+                        <p class="mb-0">MAKING LIVES BETTER THROUGH EDUCATION</p>
+                    </div>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/dashboard">
+                            <i class="fas fa-home me-2"></i> Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/student/groups">
+                            <i class="fas fa-users me-2"></i> Groups
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/profile">
+                            <i class="fas fa-user me-2"></i> Profile
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Bottom Menu Items -->
+                <div class="bottom-menu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="center-body">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg top-navbar">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <i class="fas fa-graduation-cap me-2"></i>Test Bank System
+                    </a>
+                    <div class="navbar-nav ms-auto align-items-center">
+                        <!-- User Info -->
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <%= user && user.name ? user.name.charAt(0).toUpperCase() : 'S' %>
+                            </div>
+                            <span><%= user && user.name ? user.name : 'Student' %></span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 section-header">
+                    <h1 class="h2"><i class="fas fa-users me-2"></i>Group Details</h1>
+                    <div class="btn-group">
+                        <span class="badge bg-primary fs-6"><%= files.length %> Files</span>
+                    </div>
+                </div>
+
+                <!-- Back Button -->
+                <a href="/student/groups" class="back-btn mb-4">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Groups
+                </a>
+
+                <!-- Group Header -->
+                <div class="group-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h3 mb-2">
+                                <i class="fas fa-users me-2"></i>
+                                <%= section.course %> <%= section.name %>
+                            </h1>
+                            <p class="text-muted mb-1">
+                                <strong>Subject:</strong> <%= section.subject %>
+                            </p>
+                            <p class="text-muted mb-1">
+                                <strong>Course:</strong> <%= section.course %>
+                            </p>
+                            <p class="text-muted mb-1">
+                                <strong>Year Level:</strong> <%= section.yearLevel %>
+                            </p>
+                            <p class="text-muted mb-0">
+                                <strong>School Year:</strong> <%= section.schoolYear %> | 
+                                <strong>Campus:</strong> <%= section.campus %>
+                            </p>
+                            <p class="text-muted mb-0">
+                                <strong>Students:</strong> <%= section.students.length %>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="badge bg-primary fs-6 p-2">
+                                <i class="fas fa-file me-1"></i>
+                                <%= files.length %> Files
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Files Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-folder me-2"></i>Group Files
+                        </h3>
+                        <p class="text-muted mb-0 mt-1">All shared files for this section</p>
+                    </div>
+                    <div class="card-body">
+                        <% if (files.length === 0) { %>
+                            <div class="empty-state">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>No Files Available</h3>
+                                <p class="lead">There are no files shared in this group yet.</p>
+                                <p class="text-muted">Files uploaded by instructors will appear here.</p>
+                            </div>
+                        <% } else { %>
+                            <div class="row">
+                                <% files.forEach((file, index) => { %>
+                                <div class="col-12 mb-3">
+                                    <div class="card file-card">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center">
+                                                <div class="file-icon <%= file.type || 'other' %>">
+                                                    <i class="<%= file.icon || 'fas fa-file' %>"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1"><%= file.name %></h6>
+                                                    <p class="text-muted mb-1 small">
+                                                        <i class="fas fa-hdd me-1"></i>
+                                                        <% if (file.fileSize < 1024) { %>
+                                                            <%= file.fileSize %> bytes
+                                                        <% } else if (file.fileSize < 1024 * 1024) { %>
+                                                            <%= (file.fileSize / 1024).toFixed(2) %> KB
+                                                        <% } else { %>
+                                                            <%= (file.fileSize / (1024 * 1024)).toFixed(2) %> MB
+                                                        <% } %>
+                                                        • 
+                                                        <i class="fas fa-calendar me-1"></i><%= file.date %> • 
+                                                        <i class="fas fa-user me-1"></i><%= file.uploadedBy %>
+                                                    </p>
+                                                    <% if (file.description) { %>
+                                                        <p class="mb-1 small"><%= file.description %></p>
+                                                    <% } %>
+                                                    <% if (file.tags && file.tags.length > 0) { %>
+                                                        <div class="mb-1">
+                                                            <% file.tags.forEach(tag => { %>
+                                                                <span class="badge bg-light text-dark me-1 small"><%= tag %></span>
+                                                            <% }); %>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <div class="file-actions">
+                                                    <% if (file.url) { %>
+                                                        <!-- Try direct download first -->
+                                                        <a href="<%= file.url %>" 
+                                                        class="btn btn-outline-primary btn-sm me-1" 
+                                                        download="<%= file.name %>"
+                                                        target="_blank"
+                                                        onclick="handleDownloadAttempt('<%= file.name %>', '<%= file.url %>', this)">
+                                                            <i class="fas fa-download"></i> Try Download
+                                                        </a>
+                                                        
+                                                        <a href="<%= file.url %>" 
+                                                        target="_blank" 
+                                                        class="btn btn-outline-secondary btn-sm"
+                                                        onclick="handleViewAttempt('<%= file.name %>', '<%= file.url %>', this)">
+                                                            <i class="fas fa-external-link-alt"></i> Try View
+                                                        </a>
+                                                    <% } else { %>
+                                                        <span class="btn btn-outline-warning btn-sm disabled">
+                                                            <i class="fas fa-exclamation-triangle"></i> File Unavailable
+                                                        </span>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }); %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h5 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>Confirm Logout</h5>
+            </div>
+            <div class="logout-modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLogout">Cancel</button>
+                <form action="/auth/logout" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmLogout">Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('logoutModal').style.display = 'block';
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            document.getElementById('logoutModal').style.display = 'none';
+        });
+
+        // Close modal if clicked outside
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('logoutModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+<script>
+// Test file URLs before attempting to download/view
+async function testAndDownload(element) {
+    const url = element.href;
+    const filename = element.getAttribute('data-filename');
+    
+    // Show loading
+    const originalHTML = element.innerHTML;
+    element.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) {
+            // File exists, proceed with download
+            element.innerHTML = originalHTML;
+            return true; // Allow default behavior
+        } else {
+            // File doesn't exist
+            element.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            alert(`File "${filename}" is not available for download. It may have been removed from storage.`);
+            return false; // Prevent default behavior
+        }
+    } catch (error) {
+        // Network error or CORS issue
+        element.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        alert(`Unable to access file "${filename}". Please try again later.`);
+        return false;
+    }
+}
+
+async function testAndView(element) {
+    const url = element.href;
+    const filename = element.getAttribute('data-filename');
+    
+    // Show loading
+    const originalHTML = element.innerHTML;
+    element.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) {
+            // File exists, open in new tab
+            element.innerHTML = originalHTML;
+            window.open(url, '_blank');
+        } else {
+            // File doesn't exist
+            element.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            alert(`File "${filename}" is not available for viewing. It may have been removed from storage.`);
+        }
+    } catch (error) {
+        // Network error
+        element.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        alert(`Unable to access file "${filename}". Please try again later.`);
+    }
+    
+    return false; // Always prevent default
+}
+
+// Test all file URLs when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // You can add automatic URL testing here if needed
+    console.log('Page loaded - file download buttons ready');
+});
+
+function handleDownloadAttempt(filename, url, element) {
+    console.log('Attempting download:', filename);
+    // Let the browser handle it - if it fails, user will see browser's error
+}
+
+function handleViewAttempt(filename, url, element) {
+    console.log('Attempting to view:', filename);
+    // Let the browser handle it
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Results - Test Bank System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f5f5f5;
+            --secondary-color: #060037;
+            --accent-color: #dcdf00;
+            --card-radius: 16px;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+            padding-top: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-body {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1800px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .center-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            margin-left: 5px;
+        }
+        
+        .ms-sm-auto {
+            margin:0 !important;
+            width: 100%;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            background: var(--primary-bg) !important;
+            width: 250px;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: slideInLeft 0.8s ease forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+            margin-right: 15px;
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .login-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .login-header img {
+            width: 70px;
+        }
+        
+        .login-header h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: var(--secondary-color);
+        }
+        
+        .login-header p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: var(--secondary-color) !important;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(6, 0, 55, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white !important;
+        }
+
+        /* Bottom menu items styling */
+        .bottom-menu {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .bottom-menu .nav-link {
+            margin-bottom: 8px;
+        }
+        
+        /* Top Navbar Styling */
+        .top-navbar {
+            background: var(--primary-bg) !important;
+            width: 100%;
+            border-radius: var(--card-radius);
+            padding: 15px 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: fadeFromBottom 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            margin-bottom: 20px;
+        }
+        
+        .navbar-brand {
+            color: var(--secondary-color) !important;
+            font-weight: 600;
+        }
+        
+        .navbar-text {
+            color: var(--secondary-color) !important;
+        }
+        
+        /* User Info in Top Bar */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Main Content Styling */
+        .main-content {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .section-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Card Styling */
+        .stat-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 4px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-primary { border-left-color: var(--secondary-color); }
+        .card-success { border-left-color: #198754; }
+        .card-warning { border-left-color: #ffc107; }
+        .card-info { border-left-color: #0dcaf0; }
+        .card-danger { border-left-color: #dc3545; }
+        .card-purple { border-left-color: #6f42c1; }
+        .card-teal { border-left-color: #20c997; }
+        .card-orange { border-left-color: #fd7e14; }
+        
+        .card {
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .notification-item {
+            border-left: 3px solid;
+            transition: background-color 0.2s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .progress-thin {
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        /* Table Container */
+        .table-container {
+            max-height: calc(100vh - 300px);
+            overflow: auto;
+            margin-bottom: 10px;
+            border-radius: var(--card-radius);
+            min-height: calc(100vh - 400px);
+        }
+        
+        .table.table-striped.align-middle{
+            min-height: calc(100vh - 400px);
+        }
+        
+        /* Custom scrollbar styling */
+        .table-container::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 6px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #05002e;
+        }
+        
+        /* Group Card Styling */
+        .group-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .group-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), #6610f2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .members-count {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Button Styling */
+        .btn {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #05002e;
+            border-color: #05002e;
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Stagger animations for cards */
+        .group-card:nth-child(1) { animation-delay: 0.1s; }
+        .group-card:nth-child(2) { animation-delay: 0.2s; }
+        .group-card:nth-child(3) { animation-delay: 0.3s; }
+        .group-card:nth-child(4) { animation-delay: 0.4s; }
+        .group-card:nth-child(5) { animation-delay: 0.5s; }
+        .group-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        /* Test Card Styling */
+        .test-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .status-open { color: #28a745; font-weight: bold; }
+        .status-done { color: #6c757d; font-weight: bold; }
+        .status-closed { color: #dc3545; font-weight: bold; }
+        
+        .file-card {
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s;
+            border-radius: var(--card-radius);
+            margin-bottom: 10px;
+        }
+        
+        .file-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .file-card.video { border-left-color: #dc3545; }
+        .file-card.audio { border-left-color: #fd7e14; }
+        .file-card.image { border-left-color: #20c997; }
+        .file-card.link { border-left-color: #6f42c1; }
+        
+        /* Tab Styling */
+        .nav-tabs .nav-link {
+            color: var(--secondary-color);
+            border-radius: var(--card-radius) var(--card-radius) 0 0;
+            margin-bottom: 0;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .nav-tabs .nav-link:hover:not(.active) {
+            background-color: rgba(6, 0, 55, 0.1);
+            border-color: rgba(6, 0, 55, 0.1);
+        }
+        
+        /* Progress Bar Styling */
+        .score-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .score-percentage {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .score-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 25px;
+            height: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 25px;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .question-card.correct {
+            border-left: 4px solid #28a745;
+        }
+        
+        .question-card.incorrect {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .correct-answer {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .user-answer.correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .user-answer.incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+                position: static;
+                height: auto;
+            }
+            
+            .center-body {
+                margin-left: 0;
+            }
+            
+            .table-container {
+                max-height: calc(100vh - 350px);
+            }
+            
+            .score-percentage {
+                font-size: 2rem;
+            }
+        }
+
+        /* Logout Modal */
+        .logout-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .logout-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .logout-modal-header {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logout-modal-footer {
+            border-top: 1px solid #eaeaea;
+            padding-top: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-body">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <div class="login-header">
+                        <img src="/images/phinma_logo.png" alt="PHINMA Logo" class="me-2">
+                        <h2>PHINMA EDUCATION</h2>
+                        <p class="mb-0">MAKING LIVES BETTER THROUGH EDUCATION</p>
+                    </div>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/dashboard">
+                            <i class="fas fa-home me-2"></i> Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/student/groups">
+                            <i class="fas fa-users me-2"></i> Groups
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/profile">
+                            <i class="fas fa-user me-2"></i> Profile
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Bottom Menu Items -->
+                <div class="bottom-menu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="center-body">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg top-navbar">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <i class="fas fa-graduation-cap me-2"></i>Test Bank System
+                    </a>
+                    <div class="navbar-nav ms-auto align-items-center">
+                        <!-- User Info -->
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <%= user.fullName.charAt(0).toUpperCase() %>
+                            </div>
+                            <span><%= user.fullName %></span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid main-content">
+                <!-- Test Header -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h2><%= test.title %> - Results</h2>
+                                        <p class="text-muted mb-1"><strong>Subject:</strong> <%= test.subjectCode %></p>
+                                        <p class="text-muted mb-1"><strong>Created by:</strong> <%= test.createdBy?.fullName || 'Unknown' %></p>
+                                        <p class="text-muted mb-0"><strong>Date Taken:</strong> <%= new Date(attempt.takenAt).toLocaleDateString('en-US', { 
+                                            year: 'numeric', 
+                                            month: 'long', 
+                                            day: 'numeric' 
+                                        }) %></p>
+                                        <p class="text-muted mb-0"><strong>Time Taken:</strong> <%= new Date(attempt.takenAt).toLocaleTimeString('en-US') %></p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Calculate correct/incorrect counts -->
+                                        <% 
+                                            const correctCount = attempt.questionResults.filter(q => q.isCorrect).length;
+                                            const incorrectCount = attempt.questionResults.filter(q => !q.isCorrect).length;
+                                            // FIX: Calculate total points from the ACTUAL questions shown, not the original test
+                                            const totalPossiblePoints = attempt.questionResults.reduce((total, q) => total + q.maxPoints, 0);
+                                            const percentage = Math.round((attempt.score / totalPossiblePoints) * 100);
+                                        %>
+                                        <div class="score-container">
+                                            <div class="score-percentage" id="scorePercentage">0%</div>
+                                            <div class="score-text">
+                                                <strong><%= attempt.score %>/<%= totalPossiblePoints %> points</strong>
+                                            </div>
+                                            <div class="progress-bar-container">
+                                                <div class="progress-bar-fill" id="progressBar"></div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <span class="badge <%= attempt.passed ? 'bg-success' : 'bg-danger' %> fs-6">
+                                                    <%= attempt.passed ? 'Passed' : 'Failed' %>
+                                                </span>
+                                            </div>
+                                            <% if (!attempt.passed && test.passingPoints) { %>
+                                                <p class="text-muted mt-1">
+                                                    Needed: <%= test.passingPoints %> points to pass
+                                                </p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Tabs -->
+                <ul class="nav nav-tabs mt-4" id="resultsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                            <i class="fas fa-list me-2"></i>All Answers (<%= attempt.questionResults.length %>)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="correct-tab" data-bs-toggle="tab" data-bs-target="#correct" type="button" role="tab">
+                            <i class="fas fa-check-circle me-2"></i>Correct (<%= correctCount %>)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="incorrect-tab" data-bs-toggle="tab" data-bs-target="#incorrect" type="button" role="tab">
+                            <i class="fas fa-times-circle me-2"></i>Incorrect (<%= incorrectCount %>)
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content mt-3" id="resultsTabContent">
+                    <!-- All Answers Tab -->
+                    <div class="tab-pane fade show active" id="all" role="tabpanel">
+                        <% attempt.questionResults.forEach((question, index) => { %>
+                            <div class="card question-card <%= question.isCorrect ? 'correct' : 'incorrect' %> mb-3">
+                                <div class="card-header <%= question.isCorrect ? 'bg-success' : 'bg-danger' %> text-white d-flex justify-content-between align-items-center">
+                                    <strong>Question <%= index + 1 %>: <%= question.isCorrect ? 'Correct' : 'Incorrect' %></strong>
+                                    <span class="badge bg-light <%= question.isCorrect ? 'text-success' : 'text-danger' %>">
+                                        <%= question.pointsEarned %>/<%= question.maxPoints %> points
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><strong>Question:</strong> <%= question.questionText %></p>
+                                    <p class="card-text"><strong>Type:</strong> 
+                                        <span class="badge bg-secondary text-capitalize"><%= question.questionType %></span>
+                                    </p>
+                                    
+                                    <div class="mb-2">
+                                        <strong>Your Answer:</strong>
+                                        <span class="user-answer <%= question.isCorrect ? 'correct' : 'incorrect' %> p-2 rounded d-inline-block">
+                                            <% if (Array.isArray(question.studentAnswer)) { %>
+                                                <%= question.studentAnswer.join(', ') %>
+                                            <% } else if (question.studentAnswer === null || question.studentAnswer === undefined || question.studentAnswer === '') { %>
+                                                <em class="text-muted">No answer provided</em>
+                                            <% } else { %>
+                                                <%= question.studentAnswer %>
+                                            <% } %>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <strong>Correct Answer:</strong>
+                                        <span class="correct-answer p-2 rounded d-inline-block">
+                                            <% if (Array.isArray(question.correctAnswer)) { %>
+                                                <%= question.correctAnswer.join(', ') %>
+                                            <% } else { %>
+                                                <%= question.correctAnswer %>
+                                            <% } %>
+                                        </span>
+                                    </div>
+
+                                    <!-- Show feedback if available -->
+                                    <% if (question.feedback && question.feedback.text) { %>
+                                        <div class="alert <%= question.isCorrect ? 'alert-success' : 'alert-warning' %> mt-2">
+                                            <i class="fas <%= question.isCorrect ? 'fa-check-circle' : 'fa-lightbulb' %> me-2"></i>
+                                            <strong><%= question.isCorrect ? 'Great job!' : 'Study Tip:' %></strong> 
+                                            <%= question.feedback.text %>
+                                        </div>
+                                    <% } else if (!question.isCorrect) { %>
+                                        <div class="alert alert-warning mt-2">
+                                            <i class="fas fa-lightbulb me-2"></i>
+                                            <strong>Study Tip:</strong> Review this question and try to understand the correct answer.
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <!-- Correct Answers Tab -->
+                    <div class="tab-pane fade" id="correct" role="tabpanel">
+                        <% const correctQuestions = attempt.questionResults.filter(q => q.isCorrect); %>
+                        <% if (correctQuestions.length === 0) { %>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No correct answers to display.
+                            </div>
+                        <% } else { %>
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                You answered <%= correctQuestions.length %> questions correctly.
+                            </div>
+                            
+                            <% correctQuestions.forEach((question, index) => { %>
+                                <div class="card question-card correct mb-3">
+                                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                        <strong>Question <%= attempt.questionResults.findIndex(q => q._id === question._id) + 1 %>: Correct</strong>
+                                        <span class="badge bg-light text-success">
+                                            +<%= question.pointsEarned %> point<%= question.pointsEarned !== 1 ? 's' : '' %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text"><strong>Question:</strong> <%= question.questionText %></p>
+                                        <div class="mb-2">
+                                            <strong>Your Answer:</strong>
+                                            <span class="user-answer correct p-2 rounded d-inline-block">
+                                                <% if (Array.isArray(question.studentAnswer)) { %>
+                                                    <%= question.studentAnswer.join(', ') %>
+                                                <% } else { %>
+                                                    <%= question.studentAnswer %>
+                                                <% } %>
+                                            </span>
+                                        </div>
+                                        <% if (question.feedback && question.feedback.text) { %>
+                                            <div class="alert alert-success mt-2">
+                                                <i class="fas fa-check-circle me-2"></i>
+                                                <strong>Great job!</strong> <%= question.feedback.text %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+
+                    <!-- Incorrect Answers Tab -->
+                    <div class="tab-pane fade" id="incorrect" role="tabpanel">
+                        <% const incorrectQuestions = attempt.questionResults.filter(q => !q.isCorrect); %>
+                        <% if (incorrectQuestions.length === 0) { %>
+                            <div class="alert alert-success">
+                                <i class="fas fa-trophy me-2"></i>
+                                Amazing! You got all questions correct!
+                            </div>
+                        <% } else { %>
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                You answered <%= incorrectQuestions.length %> questions incorrectly. Review these topics.
+                            </div>
+                            
+                            <% incorrectQuestions.forEach((question, index) => { %>
+                                <div class="card question-card incorrect mb-3">
+                                    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                                        <strong>Question <%= attempt.questionResults.findIndex(q => q._id === question._id) + 1 %>: Incorrect</strong>
+                                        <span class="badge bg-light text-danger">
+                                            0/<%= question.maxPoints %> points
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text"><strong>Question:</strong> <%= question.questionText %></p>
+                                        <p class="card-text"><strong>Type:</strong> 
+                                            <span class="badge bg-secondary text-capitalize"><%= question.questionType %></span>
+                                        </p>
+                                        
+                                        <div class="mb-2">
+                                            <strong>Your Answer:</strong>
+                                            <span class="user-answer incorrect p-2 rounded d-inline-block">
+                                                <% if (Array.isArray(question.studentAnswer)) { %>
+                                                    <%= question.studentAnswer.join(', ') %>
+                                                <% } else if (question.studentAnswer === null || question.studentAnswer === undefined || question.studentAnswer === '') { %>
+                                                    <em class="text-muted">No answer provided</em>
+                                                <% } else { %>
+                                                    <%= question.studentAnswer %>
+                                                <% } %>
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <strong>Correct Answer:</strong>
+                                            <span class="correct-answer p-2 rounded d-inline-block">
+                                                <% if (Array.isArray(question.correctAnswer)) { %>
+                                                    <%= question.correctAnswer.join(', ') %>
+                                                <% } else { %>
+                                                    <%= question.correctAnswer %>
+                                                <% } %>
+                                            </span>
+                                        </div>
+
+                                        <!-- Show feedback if available -->
+                                        <% if (question.feedback && question.feedback.text) { %>
+                                            <div class="alert alert-warning mt-2">
+                                                <i class="fas fa-lightbulb me-2"></i>
+                                                <strong>Study Tip:</strong> <%= question.feedback.text %>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="alert alert-warning mt-2">
+                                                <i class="fas fa-lightbulb me-2"></i>
+                                                <strong>Study Tip:</strong> Review this question and try to understand why the correct answer is "<%= Array.isArray(question.correctAnswer) ? question.correctAnswer.join(', ') : question.correctAnswer %>".
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="row mt-4 mb-4">
+                    <div class="col-12 text-center">
+                        <a href="/student/dashboard" class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <% if (test.access === 'Public' || test.assignedSections.includes(user.section)) { %>
+                            <a href="/student/take-test/<%= test._id %>?retake=true" class="btn btn-outline-success btn-lg ms-2">
+                                <i class="fas fa-redo me-2"></i>Retake Test
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h5 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>Confirm Logout</h5>
+            </div>
+            <div class="logout-modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLogout">Cancel</button>
+                <form action="/auth/logout" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmLogout">Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize animations
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${(index % 6) * 0.1}s`;
+            });
+
+            // Animate progress bar
+            const percentage = <%= percentage %>;
+            const progressBar = document.getElementById('progressBar');
+            const scorePercentage = document.getElementById('scorePercentage');
+
+            // Debug log to verify the calculation
+            console.log('📊 Score Debug:', {
+                score: <%= attempt.score %>,
+                totalPossiblePoints: <%= totalPossiblePoints %>,
+                percentage: <%= percentage %>,
+                originalTestTotal: <%= test.totalPoints %>
+            });
+
+            let currentPercentage = 0;
+            const duration = 1500; // 1.5 seconds
+            const increment = percentage / (duration / 16); // 60fps
+
+            function animateProgressBar() {
+                if (currentPercentage < percentage) {
+                    currentPercentage += increment;
+                    if (currentPercentage > percentage) currentPercentage = percentage;
+                    
+                    progressBar.style.width = currentPercentage + '%';
+                    scorePercentage.textContent = Math.round(currentPercentage) + '%';
+                    
+                    setTimeout(animateProgressBar, 16);
+                }
+            }
+
+            // Start animation after a short delay
+            setTimeout(animateProgressBar, 500);
+
+            // Logout functionality
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutModal = document.getElementById('logoutModal');
+            const cancelLogout = document.getElementById('cancelLogout');
+            const confirmLogout = document.getElementById('confirmLogout');
+
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                logoutModal.style.display = 'block';
+            });
+
+            cancelLogout.addEventListener('click', function() {
+                logoutModal.style.display = 'none';
+            });
+
+            confirmLogout.addEventListener('click', function() {
+                // Clear session and prevent back button access
+                fetch('/auth/logout', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                }).then(() => {
+                    // Clear any cached data
+                    if (window.caches) {
+                        caches.keys().then(function(names) {
+                            for (let name of names) {
+                                caches.delete(name);
+                            }
+                        });
+                    }
+                    
+                    // Redirect to login page
+                    window.location.href = '/login';
+                    
+                    // Prevent back navigation
+                    window.history.pushState(null, null, window.location.href);
+                    window.onpopstate = function() {
+                        window.history.go(1);
+                    };
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === logoutModal) {
+                    logoutModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Management - Test Bank System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Cloudinary Upload Widget -->
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <style>
+        :root {
+            --primary-bg: #f5f5f5;
+            --secondary-color: #060037;
+            --accent-color: #dcdf00;
+            --card-radius: 16px;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+            padding-top: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-body {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1800px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .center-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            margin-left: 5px;
+        }
+        
+        .ms-sm-auto {
+            margin:0 !important;
+            width: 100%;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            background: var(--primary-bg) !important;
+            width: 250px;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: slideInLeft 0.8s ease forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+            margin-right: 15px;
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .login-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .login-header img {
+            width: 70px;
+        }
+        
+        .login-header h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: var(--secondary-color);
+        }
+        
+        .login-header p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: var(--secondary-color) !important;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(6, 0, 55, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white !important;
+        }
+
+        /* Bottom menu items styling */
+        .bottom-menu {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .bottom-menu .nav-link {
+            margin-bottom: 8px;
+        }
+        
+        /* Top Navbar Styling */
+        .top-navbar {
+            background: var(--primary-bg) !important;
+            width: 100%;
+            border-radius: var(--card-radius);
+            padding: 15px 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: fadeFromBottom 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            margin-bottom: 20px;
+        }
+        
+        .navbar-brand {
+            color: var(--secondary-color) !important;
+            font-weight: 600;
+        }
+        
+        .navbar-text {
+            color: var(--secondary-color) !important;
+        }
+        
+        /* User Info in Top Bar */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Main Content Styling */
+        .main-content {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .section-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Card Styling */
+        .stat-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 4px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-primary { border-left-color: var(--secondary-color); }
+        .card-success { border-left-color: #198754; }
+        .card-warning { border-left-color: #ffc107; }
+        .card-info { border-left-color: #0dcaf0; }
+        .card-danger { border-left-color: #dc3545; }
+        .card-purple { border-left-color: #6f42c1; }
+        .card-teal { border-left-color: #20c997; }
+        .card-orange { border-left-color: #fd7e14; }
+        
+        .card {
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        /* Table Styling */
+        .table {
+            border-radius: var(--card-radius);
+            overflow: hidden;
+        }
+        
+        .table th {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+        }
+        
+        .table td {
+            border-color: #f0f0f0;
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Test Card Specific Styles */
+        .test-card { 
+            transition: transform 0.2s; 
+            border-left: 4px solid var(--secondary-color); 
+        }
+        
+        .test-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
+        
+        .expandable-row { 
+            background-color: #f8f9fa; 
+        }
+        
+        .question-item { 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            background: #f8f9fa; 
+        }
+        
+        .student-list { 
+            height: 300px; 
+            overflow-y: auto; 
+            border: 1px solid #dee2e6; 
+            border-radius: 0.375rem; 
+        }
+        
+        .student-item { 
+            padding: 0.5rem; 
+            border-bottom: 1px solid #dee2e6; 
+            cursor: pointer; 
+        }
+        
+        .student-item:hover { 
+            background-color: #f8f9fa; 
+        }
+        
+        .student-item.selected { 
+            background-color: #e7f1ff; 
+            border-left: 4px solid var(--secondary-color); 
+        }
+        
+        .transfer-buttons { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            gap: 10px; 
+        }
+        
+        .section-badge { 
+            cursor: pointer; 
+            margin: 2px; 
+        }
+        
+        .dropdown-toggle::after { 
+            display: none; 
+        }
+        
+        .choice-item, .answer-item { 
+            margin-bottom: 10px; 
+            padding: 10px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            background: white; 
+        }
+        
+        .file-preview { 
+            max-width: 100px; 
+            max-height: 100px; 
+            margin: 5px; 
+            border-radius: 4px; 
+        }
+        
+        .feedback-section { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-top: 10px; 
+        }
+        
+        .test-title-link { 
+            color: var(--secondary-color); 
+            cursor: pointer; 
+            text-decoration: none; 
+            font-weight: 500;
+        }
+        
+        .test-title-link:hover { 
+            text-decoration: underline; 
+            color: #040025;
+        }
+        
+        .assigned-sections { 
+            max-width: 200px; 
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #040025;
+            border-color: #040025;
+        }
+        
+        .btn-outline-primary {
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Form Styling */
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(6, 0, 55, 0.25);
+        }
+        
+        .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(6, 0, 55, 0.25);
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #eaeaea;
+            border-radius: var(--card-radius) var(--card-radius) 0 0;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #eaeaea;
+            border-radius: 0 0 var(--card-radius) var(--card-radius);
+        }
+
+        /* Alert Styling */
+        .alert {
+            border-radius: var(--card-radius);
+            border: none;
+        }
+
+        /* Logout Modal */
+        .logout-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .logout-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .logout-modal-header {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logout-modal-footer {
+            border-top: 1px solid #eaeaea;
+            padding-top: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Stagger animations for cards */
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; }
+        .stat-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .card:nth-child(1) { animation-delay: 0.2s; }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+        .card:nth-child(4) { animation-delay: 0.5s; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+                position: static;
+                height: auto;
+            }
+            
+            .center-body {
+                margin-left: 0;
+            }
+        }
+
+        /* NEW: Tab Navigation Styling */
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--secondary-color);
+            border-radius: 8px 8px 0 0;
+            margin-bottom: -1px;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background-color: white;
+            border-bottom: 3px solid var(--secondary-color);
+            font-weight: 600;
+            color:#060037 !important;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            background-color: rgba(6, 0, 55, 0.05);
+        }
+        
+        /* NEW: Archive-specific styling */
+        .archived-test-row {
+            opacity: 0.8;
+            background-color: #f8f9fa;
+        }
+        
+        .archived-test-row:hover {
+            opacity: 1;
+            background-color: #e9ecef;
+        }
+        
+        .archive-badge {
+            background-color: #6c757d;
+        }
+
+        /* Cloudinary upload button */
+        .cloudinary-upload-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .cloudinary-upload-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Cloudinary file type badges */
+.uploaded-file {
+    margin: 5px 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 14px;
+}
+
+.file-preview {
+    max-width: 200px;
+    max-height: 150px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 2px solid #e9ecef;
+}
+
+/* Type-specific border colors */
+.uploaded-file .bg-primary { border-left: 4px solid #007bff; }
+.uploaded-file .bg-success { border-left: 4px solid #28a745; }
+.uploaded-file .bg-danger { border-left: 4px solid #dc3545; }
+.uploaded-file .bg-info { border-left: 4px solid #17a2b8; }
+
+.cloudinary-upload-btn {
+    transition: all 0.3s ease;
+}
+
+.cloudinary-upload-btn:hover {
+    transform: translateY(-1px);
+}
+    </style>
+</head>
+<body>
+    <div class="main-body">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <div class="login-header">
+                        <img src="/images/phinma_logo.png" alt="PHINMA Logo" class="me-2">
+                        <h2>PHINMA EDUCATION</h2>
+                        <p class="mb-0">MAKING LIVES BETTER THROUGH EDUCATION</p>
+                    </div>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dean/dashboard">
+                            <i class="fas fa-home me-2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dean/sections">
+                            <i class="fas fa-layer-group me-2"></i> Sections
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dean/tests">
+                            <i class="fas fa-file-alt me-2"></i> Test Management
+                        </a>
+                    </li>
+                    
+                    <% if (user && user.role === "Dean") { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dean/manage-accounts">
+                            <i class="fas fa-users-cog me-2"></i> Manage Accounts
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+
+                <!-- Bottom Menu Items -->
+                <div class="bottom-menu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="center-body">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg top-navbar">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <i class="fas fa-graduation-cap me-2"></i>Test Bank System
+                    </a>
+                    <div class="navbar-nav ms-auto align-items-center">
+                        <!-- User Info (without dropdown) -->
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <%= user.fullName.charAt(0).toUpperCase() %>
+                            </div>
+                            <span><%= user.fullName %></span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 section-header">
+                    <h1 class="h2"><i class="fas fa-file-alt me-2"></i>Test Management</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createTestModal"><i class="fas fa-plus me-2"></i>Create Test</button>
+                    </div>
+                </div>
+
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs" id="testTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tests-tab" data-bs-toggle="tab" data-bs-target="#all-tests" type="button" role="tab" aria-controls="all-tests" aria-selected="true">
+                            <i class="fas fa-list me-1"></i> All Tests
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button" role="tab" aria-controls="archive" aria-selected="false">
+                            <i class="fas fa-archive me-1"></i> Archive
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="testTabsContent">
+                    <!-- All Tests Tab -->
+                    <div class="tab-pane fade show active" id="all-tests" role="tabpanel" aria-labelledby="all-tests-tab">
+                        <!-- Search and Filter Bar -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="testSearch" placeholder="Search tests by title, subject code, or description...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="testFilter">
+                                            <option value="">All Tests</option>
+                                            <option value="Public">Public Tests</option>
+                                            <option value="Private">Private Tests</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="subjectFilter">
+                                            <option value="">All Subjects</option>
+                                            <option value="Mathematics">Mathematics</option>
+                                            <option value="Science">Science</option>
+                                            <option value="English">English</option>
+                                            <option value="Filipino">Filipino</option>
+                                            <option value="Computer Programming">Computer Programming</option>
+                                            <option value="Data Structures">Data Structures</option>
+                                            <option value="Web Development">Web Development</option>
+                                            <option value="Database Management">Database Management</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overview Cards -->
+                        <div class="row mb-4">
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-primary h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="totalTestsCount">0</h4>
+                                                <p class="card-text">Total Tests</p>
+                                            </div>
+                                            <i class="fas fa-file-alt fa-2x" style="color: var(--secondary-color);"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-success h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="publicTestsCount">0</h4>
+                                                <p class="card-text">Public Tests</p>
+                                            </div>
+                                            <i class="fas fa-unlock fa-2x text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-warning h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="privateTestsCount">0</h4>
+                                                <p class="card-text">Private Tests</p>
+                                            </div>
+                                            <i class="fas fa-lock fa-2x text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-info h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="activeTestsCount">0</h4>
+                                                <p class="card-text">Active Tests</p>
+                                            </div>
+                                            <i class="fas fa-play-circle fa-2x text-info"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tests Table -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">All Tests</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:20%">Title</th>
+                                                <th style="width:10%">Subject Code</th>
+                                                <th style="width:8%">Access</th>
+                                                <th style="width:12%">Period</th>
+                                                <th style="width:15%">Assigned Sections</th>
+                                                <th style="width:12%">Created By</th> <!-- Changed from 10% to 12% -->
+                                                <th style="width:8%">Questions</th> <!-- Changed from 10% to 8% -->
+                                                <th style="width:15%">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="testsTableBody">
+                                            <tr><td colspan="8" class="text-center text-muted">Loading tests...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Archive Tab -->
+                    <div class="tab-pane fade" id="archive" role="tabpanel" aria-labelledby="archive-tab">
+                        <!-- Archive-specific Search and Filter Bar -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="archiveSearch" placeholder="Search archived tests by title, subject code, or description...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="archiveFilter">
+                                            <option value="">All Archived Tests</option>
+                                            <option value="Public">Public Tests</option>
+                                            <option value="Private">Private Tests</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="archiveSubjectFilter">
+                                            <option value="">All Subjects</option>
+                                            <option value="Mathematics">Mathematics</option>
+                                            <option value="Science">Science</option>
+                                            <option value="English">English</option>
+                                            <option value="Filipino">Filipino</option>
+                                            <option value="Computer Programming">Computer Programming</option>
+                                            <option value="Data Structures">Data Structures</option>
+                                            <option value="Web Development">Web Development</option>
+                                            <option value="Database Management">Database Management</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Archive Overview Cards -->
+                        <div class="row mb-4">
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-primary h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="archivedTestsCount">0</h4>
+                                                <p class="card-text">Archived Tests</p>
+                                            </div>
+                                            <i class="fas fa-archive fa-2x" style="color: var(--secondary-color);"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-success h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="archivedPublicTestsCount">0</h4>
+                                                <p class="card-text">Public Archived</p>
+                                            </div>
+                                            <i class="fas fa-unlock fa-2x text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-warning h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="archivedPrivateTestsCount">0</h4>
+                                                <p class="card-text">Private Archived</p>
+                                            </div>
+                                            <i class="fas fa-lock fa-2x text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-sm-6 mb-3">
+                                <div class="card stat-card card-info h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h4 class="card-title" id="archivedActiveTestsCount">0</h4>
+                                                <p class="card-text">Active Archived</p>
+                                            </div>
+                                            <i class="fas fa-play-circle fa-2x text-info"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Archived Tests Table -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Archived Tests</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:20%">Title</th>
+                                                <th style="width:10%">Subject Code</th>
+                                                <th style="width:8%">Access</th>
+                                                <th style="width:12%">Period</th>
+                                                <th style="width:15%">Assigned Sections</th>
+                                                <th style="width:10%">Created By</th>
+                                                <th style="width:10%">Questions</th>
+                                                <th style="width:15%">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="archiveTableBody">
+                                            <tr><td colspan="8" class="text-center text-muted">No archived tests found</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Test Modal -->
+    <div class="modal fade" id="createTestModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Create New Test</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="testForm">
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <h6>Test Information</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Title *</label>
+                                        <input type="text" class="form-control" name="title" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Subject Code *</label>
+                                        <input type="text" class="form-control" name="subjectCode" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Time Limit (minutes) <small class="text-muted">Optional</small></label>
+                                        <input type="number" class="form-control" name="timeLimit" min="1" value="1" placeholder="Leave empty for no time limit">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Deadline</label>
+                                        <input type="datetime-local" class="form-control" name="deadline" min="">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Period *</label>
+                                        <select class="form-select" name="period" required>
+                                            <option value="">Select Period</option>
+                                            <option value="1st Sem : P1">1st Sem : P1</option>
+                                            <option value="1st Sem : P2">1st Sem : P2</option>
+                                            <option value="1st Sem : P3">1st Sem : P3</option>
+                                            <option value="2nd Sem : P1">2nd Sem : P1</option>
+                                            <option value="2nd Sem : P2">2nd Sem : P2</option>
+                                            <option value="2nd Sem : P3">2nd Sem : P3</option>
+                                            <option value="Summer">Summer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Access *</label>
+                                        <select class="form-select" name="access" required>
+                                            <option value="Public">Public</option>
+                                            <option value="Private" selected>Private</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">How Many Questions Per Student *</label>
+                                        <input type="number" class="form-control" name="howManyQuestions" min="1" value="1" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Passing Points</label>
+                                    <input type="number" class="form-control" name="passingPoints" min="0" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#assignSectionsModal">
+                                        <i class="fas fa-users me-1"></i>Assign Sections
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#prerequisitesModal">
+                                        <i class="fas fa-list-check me-1"></i>Set Prerequisites
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <h6>Test Summary</h6>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-2"><strong>Total Questions:</strong> <span id="totalQuestions">0</span></div>
+                                        <div class="mb-2"><strong>Total Points:</strong> <span id="totalPoints">0</span></div>
+                                        <div class="mb-2"><strong>Passing Points:</strong> <span id="passingPointsDisplay">0</span></div>
+                                        <div class="mb-2"><strong>Period:</strong> <span id="periodDisplay">Not Selected</span></div>
+                                        <div class="mb-2"><strong>Question Types:</strong> <div id="questionTypesSummary"></div></div>
+                                        <div class="mb-2"><strong>Assigned Sections:</strong> <div id="assignedSectionsSummary">None</div></div>
+                                        <div class="mb-2"><strong>Prerequisites:</strong> <div id="prerequisitesSummary">None</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Questions Section -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6>Questions</h6>
+                            </div>
+                            <div id="questionsContainer"></div>
+                            <button type="button" class="btn btn-success btn-sm" id="addQuestionBtn">
+                                <i class="fas fa-plus me-1"></i>Add Question
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveTestBtn">Save Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Details Modal -->
+    <div class="modal fade" id="testDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Test Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="testDetailsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Sections Modal -->
+    <div class="modal fade" id="assignSectionsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-users me-2"></i>Assign Sections to Test</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Available Sections</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="availableSectionSearch" placeholder="Search sections...">
+                                    </div>
+                                    <div class="student-list" id="availableSections"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 transfer-buttons">
+                            <button class="btn btn-primary" id="addToTest">
+                                <i class="fas fa-arrow-right"></i><br>Add to Test
+                            </button>
+                            <button class="btn btn-outline-primary" id="removeFromTest">
+                                <i class="fas fa-arrow-left"></i><br>Remove
+                            </button>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Assigned Sections</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="assignedSectionSearch" placeholder="Search sections...">
+                                    </div>
+                                    <div class="student-list" id="assignedSections"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelAssignSections">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveSectionAssignment">Save Assignment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prerequisites Modal -->
+    <div class="modal fade" id="prerequisitesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-list-check me-2"></i>Set Test Prerequisites</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Students must complete these tests before they can take the current test.
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Available Tests</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="prerequisiteSearch" placeholder="Search tests...">
+                            </div>
+                            <div class="student-list" id="availablePrerequisites"></div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Selected Prerequisites</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="selectedPrerequisites"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelPrerequisites">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savePrerequisites">Save Prerequisites</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h5 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>Confirm Logout</h5>
+            </div>
+            <div class="logout-modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLogout">Cancel</button>
+                <form action="/auth/logout" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmLogout">Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // ---------- state ----------
+    let allTests = [];
+    let archivedTests = [];
+    let sections = [];
+    let showAllSections = false;
+    let currentTestForAssignment = null;
+    let selectedAvailableSections = [];
+    let selectedAssignedSections = [];
+    let questionCount = 0;
+    let selectedPrerequisites = [];
+    let assignedSectionsForNewTest = [];
+    let prerequisitesForNewTest = [];
+    let cloudinaryWidget = null;
+
+    // ---------- utils ----------
+    function formatDate(d) {
+        if (!d) return 'N/A';
+        try { return new Date(d).toLocaleString(); } catch (e) { return d; }
+    }
+
+    function formatSectionDisplayName(section) {
+        if (!section) return '';
+        
+        const match = section.name.match(/^([A-Z]+)(\d+)-([^-]+)(\d+)$/);
+        if (match) {
+            const [, course, yearLevel, campus, sectionNum] = match;
+            return `${course} ${yearLevel} - ${campus} ${sectionNum}`;
+        }
+        
+        return `${section.course || ''} ${section.yearLevel || ''} - ${section.campus || ''} ${section.name || ''}`;
+    }
+
+    // ---------- Cloudinary Configuration ----------
+const CLOUDINARY_CONFIG = {
+  cloudName: 'dcgbg6kms',
+  uploadPresets: {
+    question: 'testbank_questions',
+    correctFeedback: 'testbank_correct_feedback',
+    incorrectFeedback: 'testbank_incorrect_feedback',
+    learningMaterials: 'testbank_learning_materials'
+  }
+};
+
+// ---------- Cloudinary Upload Functions (Fixed) ----------
+async function uploadFileServerSide(file, uploadType, questionId, fieldType) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('uploadType', uploadType);
+
+    try {
+        let endpoint;
+        switch (uploadType) {
+            case 'correctFeedback':
+                endpoint = '/upload/correct-feedback'; // Fixed: removed /api prefix
+                break;
+            case 'incorrectFeedback':
+                endpoint = '/upload/incorrect-feedback'; // Fixed: removed /api prefix
+                break;
+            case 'learningMaterials':
+                endpoint = '/upload/learning-materials'; // Fixed: removed /api prefix
+                break;
+            case 'question':
+            default:
+                endpoint = '/upload/question'; // Fixed: removed /api prefix
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Upload failed');
+        }
+
+        const result = await response.json();
+        return result.url;
+    } catch (error) {
+        console.error('Server upload error:', error);
+        throw error;
+    }
+}
+
+// Replace Cloudinary widget with file input
+// Replace Cloudinary widget with file input
+function initializeFileUploads() {
+    // Replace Cloudinary buttons with file inputs
+    document.querySelectorAll('.cloudinary-upload-btn').forEach(button => {
+        const target = button.getAttribute('data-target');
+        const previewId = button.getAttribute('data-preview');
+        const uploadType = button.getAttribute('data-upload-type') || 'question';
+        
+        // Create hidden file input
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.style.display = 'none';
+        fileInput.accept = '.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.mp4,.mp3,.wav,.txt,.zip';
+        
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Validate file size (15MB)
+            if (file.size > 15 * 1024 * 1024) {
+                alert('File size must be less than 15MB');
+                return;
+            }
+            
+            // Show loading state
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+            button.disabled = true;
+            
+            try {
+                const fileUrl = await uploadFileServerSide(file, uploadType);
+                
+                // Find the corresponding hidden input
+                const questionItem = button.closest('.question-item');
+                let hiddenInput;
+                
+                if (uploadType === 'question') {
+                    hiddenInput = questionItem.querySelector('.question-file-url');
+                } else if (uploadType === 'correctFeedback') {
+                    hiddenInput = questionItem.querySelector('.feedback-correct-url');
+                } else if (uploadType === 'incorrectFeedback') {
+                    hiddenInput = questionItem.querySelector('.feedback-incorrect-url');
+                }
+                
+                if (hiddenInput) {
+                    hiddenInput.value = fileUrl;
+                    const previewContainer = document.getElementById(previewId);
+                    if (previewContainer) {
+                        createFilePreview(fileUrl, previewContainer, hiddenInput, { 
+                            original_filename: file.name,
+                            bytes: file.size 
+                        }, uploadType);
+                    }
+                }
+                
+                updateTestSummary();
+            } catch (error) {
+                alert('Upload failed: ' + error.message);
+            } finally {
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+                fileInput.value = ''; // Reset file input
+            }
+        });
+        
+        // Replace button click handler
+        button.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        button.parentNode.insertBefore(fileInput, button.nextSibling);
+    });
+}
+
+function getCloudinaryWidget(uploadType) {
+    if (!cloudinaryWidgets[uploadType]) {
+        cloudinaryWidgets[uploadType] = initializeCloudinaryWidget(uploadType);
+    }
+    return cloudinaryWidgets[uploadType];
+}
+
+function createFilePreview(fileUrl, previewContainer, hiddenInput, fileInfo = null, fileType = 'question') {
+    if (!fileUrl || !previewContainer) return;
+
+    const fileName = fileInfo?.original_filename || fileUrl.split('/').pop() || 'Uploaded File';
+    const fileSize = fileInfo?.bytes ? ` (${(fileInfo.bytes / 1024 / 1024).toFixed(2)} MB)` : '';
+    
+    // Type-specific badges and colors
+    const typeConfig = {
+        question: { badge: 'Question File', badgeClass: 'bg-primary', icon: 'fa-question-circle' },
+        correctFeedback: { badge: 'Correct Feedback', badgeClass: 'bg-success', icon: 'fa-check-circle' },
+        incorrectFeedback: { badge: 'Incorrect Feedback', badgeClass: 'bg-danger', icon: 'fa-times-circle' },
+        learningMaterials: { badge: 'Learning Material', badgeClass: 'bg-info', icon: 'fa-book' }
+    };
+    
+    const config = typeConfig[fileType] || typeConfig.question;
+
+    // Determine file type and create appropriate preview
+    if (fileUrl.match(/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i)) {
+        // Image file
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge ${config.badgeClass}">${config.badge}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <img src="${fileUrl}" class="file-preview" alt="Uploaded file preview" onerror="this.style.display='none'">
+                <div class="mt-2">
+                    <small class="text-muted"><i class="fas ${config.icon} me-1"></i>${fileName}${fileSize}</small>
+                </div>
+            </div>
+        `;
+    } else {
+        // Document or other file
+        const fileIcon = getFileIcon(fileInfo?.format);
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge ${config.badgeClass}">${config.badge}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="${fileIcon} fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>${fileName}</strong>
+                        <br>
+                        <small class="text-muted"><i class="fas ${config.icon} me-1"></i>${fileSize}</small>
+                        <br>
+                        <a href="${fileUrl}" target="_blank" class="text-decoration-none">View File</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Add remove functionality
+    const removeBtn = previewContainer.querySelector('.remove-upload');
+    if (removeBtn && hiddenInput) {
+        removeBtn.addEventListener('click', function() {
+            hiddenInput.value = '';
+            previewContainer.innerHTML = '';
+            updateTestSummary();
+        });
+    }
+}
+
+// Helper function to get file icons
+function getFileIcon(format) {
+    const iconMap = {
+        'pdf': 'fas fa-file-pdf text-danger',
+        'doc': 'fas fa-file-word text-primary',
+        'docx': 'fas fa-file-word text-primary',
+        'txt': 'fas fa-file-alt text-secondary',
+        'zip': 'fas fa-file-archive text-warning',
+        'mp3': 'fas fa-file-audio text-info',
+        'wav': 'fas fa-file-audio text-info',
+        'mp4': 'fas fa-file-video text-success',
+        'avi': 'fas fa-file-video text-success'
+    };
+    
+    return iconMap[format] || 'fas fa-file text-muted';
+}
+
+// Add event listeners for Cloudinary buttons
+function attachCloudinaryHandlers() {
+    document.querySelectorAll('.cloudinary-upload-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            openCloudinaryWidget(this);
+        });
+    });
+}
+
+    // ---------- data loading ----------
+    async function loadInitialData() {
+        try {
+            const res = await fetch('/api/tests');
+            if (!res.ok) throw new Error('Failed to load tests');
+            allTests = await res.json();
+            console.log('Loaded tests:', allTests);
+        } catch (err) {
+            console.error('Error loading tests:', err);
+            allTests = [];
+        }
+
+        try {
+            const sres = await fetch('/api/sections');
+            if (sres.ok) sections = await sres.json();
+            else sections = [];
+        } catch (err) {
+            console.warn('No /api/sections endpoint or error fetching sections:', err);
+            sections = [];
+        }
+
+        renderTestsTable();
+        renderArchiveTable();
+        updateOverviewCards();
+        updateArchiveOverviewCards();
+    }
+
+    // ---------- rendering ----------
+function renderTestsTable() {
+    const tableBody = document.getElementById('testsTableBody');
+    tableBody.innerHTML = '';
+
+    const filter = document.getElementById('testFilter')?.value || '';
+    const search = (document.getElementById('testSearch')?.value || '').toLowerCase();
+    const subjectFilter = document.getElementById('subjectFilter')?.value || '';
+
+    const testsToShow = allTests.filter(test => {
+        if (filter && test.access !== filter) return false;
+        if (subjectFilter && test.subjectCode !== subjectFilter) return false;
+        if (!search) return true;
+        return (test.title || '').toLowerCase().includes(search) ||
+            (test.subjectCode || '').toLowerCase().includes(search) ||
+            (test.description || '').toLowerCase().includes(search);
+    });
+
+    if (testsToShow.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No tests match your search criteria</td></tr>';
+        return;
+    }
+
+    tableBody.innerHTML = '';
+    testsToShow.forEach(test => {
+        const row = document.createElement('tr');
+
+        const assignedSections = test.assignedSections && test.assignedSections.length > 0
+        ? test.assignedSections.map(sectionName => {
+            const section = sections.find(s => s.name === sectionName);
+            if (section) {
+                const displayName = formatSectionDisplayName(section);
+                return `<span class="badge bg-secondary me-1 mb-1" title="${sectionName}">${displayName}</span>`;
+            }
+            const match = sectionName.match(/^([A-Z]+)(\d+)-([^-]+)(\d+)$/);
+            if (match) {
+                const [, course, yearLevel, campus, sectionNum] = match;
+                const displayName = `${course} ${yearLevel} - ${campus} ${sectionNum}`;
+                return `<span class="badge bg-secondary me-1 mb-1" title="${sectionName}">${displayName}</span>`;
+            }
+            return `<span class="badge bg-secondary me-1 mb-1">${sectionName}</span>`;
+            }).join('')
+        : '<span class="text-muted">None</span>';
+
+        // FIXED: Proper creator name handling
+        const createdByName = test.createdBy 
+            ? (test.createdBy.fullName 
+                ? test.createdBy.fullName 
+                : `${test.createdBy.lastName || ''}, ${test.createdBy.firstName || ''} ${test.createdBy.middleName || ''}`.trim().replace(/^,\s*|\s*,/g, ''))
+            : 'Old Record, Creator Not Recorded';
+
+        row.innerHTML = `
+        <td>
+            <a class="test-title-link" onclick="viewTestDetails('${test._id}')">
+                ${test.title || 'Untitled'}
+            </a>
+        </td>
+        <td>${test.subjectCode || ''}</td>
+        <td>
+            <span class="badge ${test.access === 'Public' ? 'bg-success' : 'bg-warning'}">
+                ${test.access || 'Private'}
+            </span>
+        </td>
+        <td>${test.period || 'Not Set'}</td>
+        <td class="assigned-sections">${assignedSections}</td>
+        <td>${createdByName}</td>
+        <td>
+            ${test.totalQuestions ?? 0} question${test.totalQuestions === 1 ? '' : 's'}
+            <br>
+            ${test.totalPoints ?? 0} point${test.totalPoints === 1 ? '' : 's'}
+        </td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                        type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="duplicateTest('${test._id}')">
+                            <i class="fas fa-copy me-2"></i>Duplicate
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="openAssignSections('${test._id}')">
+                            <i class="fas fa-users me-2"></i>Assign
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="openEditTest('${test._id}')">
+                            <i class="fas fa-edit me-2"></i>Edit
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" onclick="deleteTest('${test._id}')">
+                            <i class="fas fa-trash me-2"></i>Delete
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-warning" href="#" onclick="archiveTest('${test._id}')">
+                            <i class="fas fa-archive me-2"></i>Archive
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+function renderArchiveTable() {
+    const tableBody = document.getElementById('archiveTableBody');
+    tableBody.innerHTML = '';
+
+    const filter = document.getElementById('archiveFilter')?.value || '';
+    const search = (document.getElementById('archiveSearch')?.value || '').toLowerCase();
+    const subjectFilter = document.getElementById('archiveSubjectFilter')?.value || '';
+
+    const testsToShow = archivedTests.filter(test => {
+        if (filter && test.access !== filter) return false;
+        if (subjectFilter && test.subjectCode !== subjectFilter) return false;
+        if (!search) return true;
+        return (test.title || '').toLowerCase().includes(search) ||
+            (test.subjectCode || '').toLowerCase().includes(search) ||
+            (test.description || '').toLowerCase().includes(search);
+    });
+
+    if (testsToShow.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No archived tests match your search criteria</td></tr>';
+        return;
+    }
+
+    tableBody.innerHTML = '';
+    testsToShow.forEach(test => {
+        const row = document.createElement('tr');
+        row.className = 'archived-test-row';
+
+        const assignedSections = test.assignedSections && test.assignedSections.length > 0
+        ? test.assignedSections.map(sectionName => {
+            const section = sections.find(s => s.name === sectionName);
+            if (section) {
+                const displayName = formatSectionDisplayName(section);
+                return `<span class="badge bg-secondary me-1 mb-1" title="${sectionName}">${displayName}</span>`;
+            }
+            const match = sectionName.match(/^([A-Z]+)(\d+)-([^-]+)(\d+)$/);
+            if (match) {
+                const [, course, yearLevel, campus, sectionNum] = match;
+                const displayName = `${course} ${yearLevel} - ${campus} ${sectionNum}`;
+                return `<span class="badge bg-secondary me-1 mb-1" title="${sectionName}">${displayName}</span>`;
+            }
+            return `<span class="badge bg-secondary me-1 mb-1">${sectionName}</span>`;
+            }).join('')
+        : '<span class="text-muted">None</span>';
+
+        // FIXED: Proper creator name handling
+        const createdByName = test.createdBy 
+            ? (test.createdBy.fullName 
+                ? test.createdBy.fullName 
+                : `${test.createdBy.lastName || ''}, ${test.createdBy.firstName || ''} ${test.createdBy.middleName || ''}`.trim().replace(/^,\s*|\s*,/g, ''))
+            : 'Old Record, Creator Not Recorded';
+
+        row.innerHTML = `
+        <td>
+            <a class="test-title-link" onclick="viewArchivedTestDetails('${test._id}')">
+                ${test.title || 'Untitled'}
+            </a>
+            <span class="badge archive-badge ms-1">Archived</span>
+        </td>
+        <td>${test.subjectCode || ''}</td>
+        <td>
+            <span class="badge ${test.access === 'Public' ? 'bg-success' : 'bg-warning'}">
+                ${test.access || 'Private'}
+            </span>
+        </td>
+        <td>${test.period || 'Not Set'}</td>
+        <td class="assigned-sections">${assignedSections}</td>
+        <td>${createdByName}</td>
+        <td>
+            ${test.totalQuestions ?? 0} question${test.totalQuestions === 1 ? '' : 's'}
+            <br>
+            ${test.totalPoints ?? 0} point${test.totalPoints === 1 ? '' : 's'}
+        </td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                        type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="viewArchivedTestDetails('${test._id}')">
+                            <i class="fas fa-eye me-2"></i>View Details
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="restoreTest('${test._id}')">
+                            <i class="fas fa-undo me-2"></i>Restore
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" onclick="permanentlyDeleteTest('${test._id}')">
+                            <i class="fas fa-trash-alt me-2"></i>Delete Permanently
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+    function updateOverviewCards() {
+        const totalTests = allTests.length;
+        const publicTests = allTests.filter(t => t.access === 'Public').length;
+        const privateTests = allTests.filter(t => t.access === 'Private').length;
+        const activeTests = allTests.filter(t => !t.deadline || new Date(t.deadline) > new Date()).length;
+
+        document.getElementById('totalTestsCount').textContent = totalTests;
+        document.getElementById('publicTestsCount').textContent = publicTests;
+        document.getElementById('privateTestsCount').textContent = privateTests;
+        document.getElementById('activeTestsCount').textContent = activeTests;
+    }
+
+    function updateArchiveOverviewCards() {
+        const archivedTestsCount = archivedTests.length;
+        const archivedPublicTests = archivedTests.filter(t => t.access === 'Public').length;
+        const archivedPrivateTests = archivedTests.filter(t => t.access === 'Private').length;
+        const archivedActiveTests = archivedTests.filter(t => !t.deadline || new Date(t.deadline) > new Date()).length;
+
+        document.getElementById('archivedTestsCount').textContent = archivedTestsCount;
+        document.getElementById('archivedPublicTestsCount').textContent = archivedPublicTests;
+        document.getElementById('archivedPrivateTestsCount').textContent = archivedPrivateTests;
+        document.getElementById('archivedActiveTestsCount').textContent = archivedActiveTests;
+    }
+
+    // ---------- CRUD actions ----------
+    async function viewTestDetails(testId) {
+        try {
+            let test = allTests.find(t => t._id === testId);
+            if (!test) {
+                const res = await fetch(`/api/tests/${testId}`);
+                if (!res.ok) { alert('Failed to fetch test details'); return; }
+                test = await res.json();
+            }
+
+            let questionsHTML = '';
+            (test.questions || []).forEach((q, index) => {
+                questionsHTML += `
+                    <div class="question-item mb-3">
+                        <h6>Question ${index + 1} (${q.points || 0} points)</h6>
+                        <p><strong>${q.text || ''}</strong></p>
+                        <div class="ms-3">
+                `;
+                if (q.type === 'multiple') {
+                    questionsHTML += '<p><strong>Choices:</strong></p><ul>';
+                    (q.choices || []).forEach(choice => {
+                        const isCorrect = Array.isArray(q.correctAnswer) ? q.correctAnswer.includes(choice) : q.correctAnswer === choice;
+                        questionsHTML += `<li>${choice} ${isCorrect ? '<span class="badge bg-success">Correct</span>' : ''}</li>`;
+                    });
+                    questionsHTML += '</ul>';
+                } else if (q.type === 'truefalse') {
+                    questionsHTML += `<p><strong>Answer:</strong> ${q.correctAnswer || ''}</p>`;
+                } else if (q.type === 'enumeration') {
+                    questionsHTML += '<p><strong>Answers:</strong></p><ul>';
+                    (q.answers || []).forEach(answer => { questionsHTML += `<li>${answer}</li>`; });
+                    questionsHTML += '</ul>';
+                } else if (q.type === 'identification') {
+                    questionsHTML += `<p><strong>Answer:</strong> ${q.answers ? q.answers.join(', ') : ''}</p>`;
+                } else if (q.type === 'essay') {
+                    questionsHTML += `<p><strong>Expected Answer:</strong> ${q.expectedAnswer || 'N/A'}</p>`;
+                }
+                questionsHTML += `</div></div>`;
+            });
+
+            const assignedSections = test.assignedSections && test.assignedSections.length > 0
+                ? test.assignedSections.map(sectionName => {
+                    const section = sections.find(s => s.name === sectionName);
+                    if (section) {
+                        const displayName = formatSectionDisplayName(section);
+                        return `<span class="badge bg-secondary me-1">${displayName}</span>`;
+                    }
+                    const match = sectionName.match(/^([A-Z]+)(\d+)-([^-]+)(\d+)$/);
+                    if (match) {
+                        const [, course, yearLevel, campus, sectionNum] = match;
+                        const displayName = `${course} ${yearLevel} - ${campus} ${sectionNum}`;
+                        return `<span class="badge bg-secondary me-1">${displayName}</span>`;
+                    }
+                    return `<span class="badge bg-secondary me-1">${sectionName}</span>`;
+                }).join('')
+                : '<span class="text-muted">None</span>';
+
+            const prerequisites = test.prerequisites && test.prerequisites.length > 0
+                ? test.prerequisites.map(p => {
+                    const prereqTest = allTests.find(t => t._id === p);
+                    return prereqTest ? `<span class="badge bg-info me-1">${prereqTest.title}</span>` : '';
+                }).join('') : '<span class="text-muted">None</span>';
+
+            document.getElementById('testDetailsContent').innerHTML = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>${test.title}</h4>
+                        <p class="text-muted">${test.description || ''}</p>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Subject Code:</strong> ${test.subjectCode || ''}</div>
+                            <div class="col-md-4"><strong>Access:</strong> <span class="badge ${test.access === 'Public' ? 'bg-success' : 'bg-warning'}">${test.access || ''}</span></div>
+                            <div class="col-md-4"><strong>Time Limit:</strong> ${test.timeLimit || ''} minutes</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Questions Per Student:</strong> ${test.howManyQuestions || ''}</div>
+                            <div class="col-md-4"><strong>Passing Points:</strong> ${test.passingPoints || ''}</div>
+                            <div class="col-md-4"><strong>Period:</strong> ${test.period || 'Not Set'}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Deadline:</strong> ${test.deadline ? formatDate(test.deadline) : 'None'}</div>
+                        </div>
+                        <div class="mb-3"><strong>Assigned Sections:</strong><br>${assignedSections}</div>
+                        <div class="mb-3"><strong>Prerequisites:</strong><br>${prerequisites}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card"><div class="card-body">
+                            <h6>Test Summary</h6>
+                            <p><strong>Total Questions:</strong> ${ (test.questions||[]).length }</p>
+                            <p><strong>Total Points:</strong> ${ (test.questions||[]).reduce((s,q)=>s+(q.points||0),0) }</p>
+                            <p><strong>Created By:</strong> ${test.createdByName||''}</p>
+                            <p><strong>Created:</strong> ${formatDate(test.createdAt)}</p>
+                            <p><strong>Last Updated:</strong> ${formatDate(test.updatedAt)}</p>
+                        </div></div>
+                    </div>
+                </div>
+                <hr>
+                <h5>Questions</h5>
+                ${questionsHTML}
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('testDetailsModal'));
+            modal.show();
+        } catch (err) {
+            console.error('Error viewing test details:', err);
+            alert('Failed to load test details');
+        }
+    }
+
+    function viewArchivedTestDetails(testId) {
+        try {
+            const test = archivedTests.find(t => t._id === testId);
+            if (!test) {
+                alert('Archived test not found');
+                return;
+            }
+
+            document.getElementById('testDetailsContent').innerHTML = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>${test.title} <span class="badge archive-badge ms-2">Archived</span></h4>
+                        <p class="text-muted">${test.description || ''}</p>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Subject Code:</strong> ${test.subjectCode || ''}</div>
+                            <div class="col-md-4"><strong>Access:</strong> <span class="badge ${test.access === 'Public' ? 'bg-success' : 'bg-warning'}">${test.access || ''}</span></div>
+                            <div class="col-md-4"><strong>Period:</strong> ${test.period || 'Not Set'}</div>
+                        </div>
+                        <div class="mb-3"><strong>Archived Date:</strong> ${test.archivedDate ? formatDate(test.archivedDate) : 'N/A'}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card"><div class="card-body">
+                            <h6>Test Summary</h6>
+                            <p><strong>Total Questions:</strong> ${test.totalQuestions || 0}</p>
+                            <p><strong>Total Points:</strong> ${test.totalPoints || 0}</p>
+                            <p><strong>Created By:</strong> ${test.createdBy?.fullName || 'Unknown'}</p>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This test has been archived and is no longer active. You can restore it or delete it permanently.
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('testDetailsModal'));
+            modal.show();
+        } catch (err) {
+            console.error('Error viewing archived test details:', err);
+            alert('Failed to load archived test details');
+        }
+    }
+
+    function setMinDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        
+        document.querySelectorAll('input[name="deadline"]').forEach(input => {
+            input.min = minDateTime;
+        });
+    }
+
+    function archiveTest(testId) {
+        if (!confirm('Are you sure you want to archive this test? It will be moved to the Archive tab.')) return;
+        
+        try {
+            const testIndex = allTests.findIndex(t => t._id === testId);
+            if (testIndex === -1) {
+                alert('Test not found');
+                return;
+            }
+            
+            const testToArchive = allTests[testIndex];
+            testToArchive.archivedDate = new Date().toISOString();
+            archivedTests.push(testToArchive);
+            allTests.splice(testIndex, 1);
+            
+            renderTestsTable();
+            renderArchiveTable();
+            updateOverviewCards();
+            updateArchiveOverviewCards();
+            
+            alert('Test archived successfully!');
+        } catch (err) {
+            console.error('Error archiving test:', err);
+            alert('Failed to archive test');
+        }
+    }
+
+    function restoreTest(testId) {
+        if (!confirm('Are you sure you want to restore this test? It will be moved back to the All Tests tab.')) return;
+        
+        try {
+            const testIndex = archivedTests.findIndex(t => t._id === testId);
+            if (testIndex === -1) {
+                alert('Test not found in archive');
+                return;
+            }
+            
+            const testToRestore = archivedTests[testIndex];
+            delete testToRestore.archivedDate;
+            allTests.push(testToRestore);
+            archivedTests.splice(testIndex, 1);
+            
+            renderTestsTable();
+            renderArchiveTable();
+            updateOverviewCards();
+            updateArchiveOverviewCards();
+            
+            alert('Test restored successfully!');
+        } catch (err) {
+            console.error('Error restoring test:', err);
+            alert('Failed to restore test');
+        }
+    }
+
+    function permanentlyDeleteTest(testId) {
+        if (!confirm('Are you sure you want to permanently delete this test? This action cannot be undone.')) return;
+        
+        try {
+            const testIndex = archivedTests.findIndex(t => t._id === testId);
+            if (testIndex === -1) {
+                alert('Test not found in archive');
+                return;
+            }
+            
+            archivedTests.splice(testIndex, 1);
+            renderArchiveTable();
+            updateArchiveOverviewCards();
+            
+            alert('Test permanently deleted!');
+        } catch (err) {
+            console.error('Error permanently deleting test:', err);
+            alert('Failed to delete test');
+        }
+    }
+
+    // Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize secure file uploads
+    initializeFileUploads();
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const confirmLogout = document.getElementById('confirmLogout');
+    
+    logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        logoutModal.style.display = 'block';
+    });
+
+    cancelLogout.addEventListener('click', function() {
+        logoutModal.style.display = 'none';
+    });
+
+    confirmLogout.addEventListener('click', function() {
+        fetch('/auth/logout', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(() => {
+            if (window.caches) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+            window.location.href = '/login';
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function() {
+                window.history.go(1);
+            };
+        });
+    });
+
+    window.addEventListener('click', function(e) {
+        if (e.target === logoutModal) {
+            logoutModal.style.display = 'none';
+        }
+    });
+
+    // Test management functionality
+    document.getElementById('testFilter')?.addEventListener('change', renderTestsTable);
+    document.getElementById('testSearch')?.addEventListener('input', renderTestsTable);
+    document.getElementById('subjectFilter')?.addEventListener('change', renderTestsTable);
+
+    document.getElementById('archiveFilter')?.addEventListener('change', renderArchiveTable);
+    document.getElementById('archiveSearch')?.addEventListener('input', renderArchiveTable);
+    document.getElementById('archiveSubjectFilter')?.addEventListener('change', renderArchiveTable);
+
+    document.getElementById('addQuestionBtn')?.addEventListener('click', () => { 
+        addQuestion(); 
+        initializeFileUploads(); // Re-initialize uploads for new question
+    });
+
+    document.getElementById('saveTestBtn')?.addEventListener('click', () => createTest());
+
+    document.getElementById('assignSectionsModal')?.addEventListener('show.bs.modal', populateSectionAssignment);
+    document.getElementById('prerequisitesModal')?.addEventListener('show.bs.modal', populatePrerequisites);
+
+    document.querySelector('select[name="period"]')?.addEventListener('change', updateTestSummary);
+
+    await loadInitialData();
+
+    setInterval(() => { 
+        attachQuestionHandlers(); 
+        initializeFileUploads(); // Re-initialize uploads periodically
+        updateTestSummary(); 
+    }, 1000);
+});
+
+// ---------- Question Management Functions ----------
+function addQuestion() {
+    const container = document.getElementById('questionsContainer');
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = getQuestionTemplate();
+    container.appendChild(wrapper.firstElementChild);
+    
+    renumberQuestions();
+    updateTestSummary();
+}
+
+function renumberQuestions() {
+    const questions = document.querySelectorAll('.question-item');
+    questions.forEach((question, index) => {
+        const numberElement = question.querySelector('.question-number');
+        if (numberElement) {
+            numberElement.textContent = `Question ${index + 1}`;
+        }
+    });
+}
+
+function attachQuestionHandlers() {
+    document.querySelectorAll('.remove-question').forEach(btn => {
+        btn.onclick = (e) => { 
+            e.target.closest('.question-item').remove(); 
+            renumberQuestions();
+            updateTestSummary(); 
+        };
+    });
+    
+    document.querySelectorAll('.question-type').forEach(select => {
+        select.onchange = (e) => renderAnswerSection(e.target.closest('.question-item'), e.target.value);
+    });
+    
+    document.querySelectorAll('.question-points').forEach(inp => {
+        inp.oninput = updateTestSummary;
+    });
+}
+
+function renderAnswerSection(questionEl, type) {
+    const section = questionEl.querySelector('.question-answer-section');
+    if (!section) return;
+    
+    let html = '';
+    switch(type) {
+        case 'multiple':
+            html = `
+                <h6>Multiple Choice Answers</h6>
+                <div class="choices-container">
+                    <div class="choice-item">
+                        <div class="input-group">
+                            <span class="input-group-text">A</span>
+                            <input type="text" class="form-control choice-text" placeholder="Choice A" required>
+                            <div class="input-group-text">
+                                <input class="form-check-input correct-choice" type="checkbox" value="A">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-choice">Add Choice</button>
+            `;
+            break;
+        case 'truefalse':
+            const questionIndex = Array.from(document.querySelectorAll('.question-item')).indexOf(questionEl);
+            html = `
+                <h6>True or False</h6>
+                <div class="choices-container">
+                    <div class="choice-item">
+                        <div class="form-check">
+                            <input class="form-check-input correct-choice" type="radio" name="tf-${questionIndex}" value="True" required>
+                            <label class="form-check-label">True</label>
+                        </div>
+                    </div>
+                    <div class="choice-item">
+                        <div class="form-check">
+                            <input class="form-check-input correct-choice" type="radio" name="tf-${questionIndex}" value="False">
+                            <label class="form-check-label">False</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+        case 'enumeration':
+            html = `
+                <h6>Enumeration Answers</h6>
+                <div class="mb-3">
+                    <label class="form-label">Number of Answers Required</label>
+                    <input type="number" class="form-control enumeration-required" min="1" value="1">
+                </div>
+                <div class="enumeration-container">
+                    <div class="answer-item">
+                        <div class="input-group">
+                            <input type="text" class="form-control enumeration-answer" placeholder="Answer 1" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-enum">Add Answer</button>
+            `;
+            break;
+        case 'identification':
+            html = `
+                <h6>Identification Answers</h6>
+                <div class="identification-container">
+                    <div class="answer-item">
+                        <div class="input-group">
+                            <input type="text" class="form-control identification-answer" placeholder="Correct Answer 1" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2 add-id">Add Alternative Answer</button>
+            `;
+            break;
+        case 'essay':
+            html = `
+                <h6>Essay Question</h6>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>This is an essay question. Answers will be manually evaluated.
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Expected Answer (for reference)</label>
+                    <textarea class="form-control essay-answer" rows="3"></textarea>
+                </div>
+            `;
+            break;
+        default:
+            html = '';
+    }
+    
+    section.innerHTML = html;
+
+    // Add event listeners for dynamic elements
+    section.querySelectorAll('.add-choice').forEach(btn => {
+        btn.onclick = () => {
+            const container = section.querySelector('.choices-container');
+            const nextLetter = String.fromCharCode(65 + container.children.length);
+            container.insertAdjacentHTML('beforeend', `
+                <div class="choice-item">
+                    <div class="input-group">
+                        <span class="input-group-text">${nextLetter}</span>
+                        <input type="text" class="form-control choice-text" placeholder="Choice ${nextLetter}" required>
+                        <div class="input-group-text">
+                            <input class="form-check-input correct-choice" type="checkbox" value="${nextLetter}">
+                        </div>
+                    </div>
+                </div>
+            `);
+            attachQuestionHandlers();
+        };
+    });
+    
+    section.querySelectorAll('.add-enum').forEach(btn => {
+        btn.onclick = () => {
+            const container = section.querySelector('.enumeration-container');
+            const count = container.children.length + 1;
+            container.insertAdjacentHTML('beforeend', `
+                <div class="answer-item">
+                    <div class="input-group">
+                        <input type="text" class="form-control enumeration-answer" placeholder="Answer ${count}" required>
+                    </div>
+                </div>
+            `);
+        };
+    });
+    
+    section.querySelectorAll('.add-id').forEach(btn => {
+        btn.onclick = () => {
+            const container = section.querySelector('.identification-container');
+            const count = container.children.length + 1;
+            container.insertAdjacentHTML('beforeend', `
+                <div class="answer-item">
+                    <div class="input-group">
+                        <input type="text" class="form-control identification-answer" placeholder="Correct Answer ${count}" required>
+                    </div>
+                </div>
+            `);
+        };
+    });
+}
+
+function updateTestSummary() {
+    const totalQuestions = document.querySelectorAll('.question-item').length;
+    const totalPoints = Array.from(document.querySelectorAll('.question-points')).reduce((s, el) => s + (Number(el.value) || 0), 0);
+    const typeCounts = {};
+    
+    document.querySelectorAll('.question-type').forEach(sel => {
+        if (sel.value) typeCounts[sel.value] = (typeCounts[sel.value] || 0) + 1;
+    });
+
+    document.getElementById('totalQuestions').textContent = totalQuestions;
+    document.getElementById('totalPoints').textContent = totalPoints;
+    document.getElementById('questionTypesSummary').innerHTML = Object.entries(typeCounts).map(([t,c]) => `${t}: ${c}`).join('<br>') || 'No questions added';
+    document.getElementById('passingPointsDisplay').textContent = document.getElementById('testForm')?.querySelector('[name="passingPoints"]')?.value || '0';
+    
+    // Update period display in summary
+    const periodSelect = document.getElementById('testForm')?.querySelector('[name="period"]');
+    if (periodSelect) {
+        document.getElementById('periodDisplay').textContent = periodSelect.value || 'Not Selected';
+    }
+}
+
+// ---------- Section Assignment Functions ----------
+function populateSectionAssignment() {
+    const availableEl = document.getElementById('availableSections');
+    const assignedEl = document.getElementById('assignedSections');
+    
+    availableEl.innerHTML = '';
+    assignedEl.innerHTML = '';
+
+    // Get current assigned sections
+    let currentAssigned = [];
+    if (currentTestForAssignment) {
+        const test = allTests.find(t => t._id === currentTestForAssignment);
+        currentAssigned = test ? (test.assignedSections || []) : [];
+    } else {
+        currentAssigned = assignedSectionsForNewTest || [];
+    }
+
+    // Populate available sections (all sections not currently assigned)
+    sections.forEach(section => {
+        if (!currentAssigned.includes(section.name)) {
+            const div = document.createElement('div');
+            div.className = 'student-item';
+            const displayName = `${section.course}${section.yearLevel}-${section.name} (${section.subject})`;
+            div.innerHTML = `
+                <div class="form-check">
+                    <input class="form-check-input section-checkbox" type="checkbox" value="${section.name}">
+                    <label class="form-check-label">${displayName}</label>
+                </div>
+            `;
+            availableEl.appendChild(div);
+        }
+    });
+
+    // Populate assigned sections
+    currentAssigned.forEach(sectionName => {
+        const section = sections.find(s => s.name === sectionName);
+        if (section) {
+            const div = document.createElement('div');
+            div.className = 'student-item';
+            const displayName = `${section.course}${section.yearLevel}-${section.name} (${section.subject})`;
+            div.innerHTML = `
+                <div class="form-check">
+                    <input class="form-check-input section-checkbox" type="checkbox" value="${section.name}">
+                    <label class="form-check-label">${displayName}</label>
+                </div>
+            `;
+            assignedEl.appendChild(div);
+        } else {
+            // If section not found in sections API, show the raw name
+            const div = document.createElement('div');
+            div.className = 'student-item';
+            div.innerHTML = `
+                <div class="form-check">
+                    <input class="form-check-input section-checkbox" type="checkbox" value="${sectionName}">
+                    <label class="form-check-label">${sectionName} (Not Found in Sections)</label>
+                </div>
+            `;
+            assignedEl.appendChild(div);
+        }
+    });
+
+    // Add click handlers for row selection
+    document.querySelectorAll('#availableSections .student-item, #assignedSections .student-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (e.target.type === 'checkbox') return;
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            updateSectionSelection();
+        });
+    });
+
+    // Add checkbox change handlers
+    document.querySelectorAll('#availableSections .section-checkbox, #assignedSections .section-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSectionSelection);
+    });
+
+    updateSectionSelection();
+}
+
+function updateSectionSelection() {
+    selectedAvailableSections = [];
+    selectedAssignedSections = [];
+
+    document.querySelectorAll('#availableSections .section-checkbox:checked').forEach(cb => {
+        selectedAvailableSections.push(cb.value);
+    });
+
+    document.querySelectorAll('#assignedSections .section-checkbox:checked').forEach(cb => {
+        selectedAssignedSections.push(cb.value);
+    });
+}
+
+function openAssignSections(testId) {
+    currentTestForAssignment = testId;
+    populateSectionAssignment();
+    const modal = new bootstrap.Modal(document.getElementById('assignSectionsModal'));
+    modal.show();
+}
+
+// ---------- Prerequisites Functions ----------
+function populatePrerequisites() {
+    const container = document.getElementById('availablePrerequisites');
+    const selectedContainer = document.getElementById('selectedPrerequisites');
+    container.innerHTML = '';
+    selectedContainer.innerHTML = '';
+
+    // Get current prerequisites
+    let currentPrerequisites = [];
+    if (currentTestForAssignment) {
+        const test = allTests.find(t => t._id === currentTestForAssignment);
+        currentPrerequisites = test ? (test.prerequisites || []) : [];
+    } else {
+        currentPrerequisites = prerequisitesForNewTest || [];
+    }
+
+    // Populate available tests (excluding current test)
+    allTests.forEach(test => {
+        if (test._id === currentTestForAssignment) return;
+        
+        const isSelected = currentPrerequisites.includes(String(test._id));
+        const div = document.createElement('div');
+        div.className = 'student-item';
+        div.innerHTML = `
+            <div class="form-check">
+                <input class="form-check-input prerequisite-checkbox" type="checkbox" value="${test._id}" id="prereq-${test._id}" ${isSelected ? 'checked' : ''}>
+                <label class="form-check-label" for="prereq-${test._id}">${test.title} (${test.subjectCode})</label>
+            </div>
+        `;
+        container.appendChild(div);
+
+        if (isSelected) {
+            const selectedDiv = document.createElement('div');
+            selectedDiv.className = 'badge bg-info me-1 mb-1';
+            selectedDiv.textContent = test.title;
+            selectedContainer.appendChild(selectedDiv);
+        }
+    });
+
+    // Add click handlers for row selection
+    document.querySelectorAll('#availablePrerequisites .student-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (e.target.type === 'checkbox') return;
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            updatePrerequisitesSelection();
+        });
+    });
+
+    // Add checkbox change handlers
+    document.querySelectorAll('.prerequisite-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updatePrerequisitesSelection);
+    });
+}
+
+function updatePrerequisitesSelection() {
+    const selectedContainer = document.getElementById('selectedPrerequisites');
+    selectedContainer.innerHTML = '';
+
+    document.querySelectorAll('.prerequisite-checkbox:checked').forEach(cb => {
+        const testId = cb.value;
+        const test = allTests.find(t => t._id === testId);
+        if (test) {
+            const div = document.createElement('div');
+            div.className = 'badge bg-info me-1 mb-1';
+            div.textContent = test.title;
+            selectedContainer.appendChild(div);
+        }
+    });
+}
+
+function updateAssignedSectionsSummary() {
+    const summaryElement = document.getElementById('assignedSectionsSummary');
+    if (assignedSectionsForNewTest.length > 0) {
+        summaryElement.innerHTML = assignedSectionsForNewTest.map(sectionName => {
+            // Find the section data to get proper formatting
+            const section = sections.find(s => s.name === sectionName);
+            if (section) {
+                const displayName = formatSectionDisplayName(section);
+                return `<span class="badge bg-secondary me-1 mb-1">${displayName}</span>`;
+            }
+            // Fallback: try to parse from the section name
+            const match = sectionName.match(/^([A-Z]+)(\d+)-([^-]+)(\d+)$/);
+            if (match) {
+                const [, course, yearLevel, campus, sectionNum] = match;
+                const displayName = `${course} ${yearLevel} - ${campus} ${sectionNum}`;
+                return `<span class="badge bg-secondary me-1 mb-1">${displayName}</span>`;
+            }
+            return `<span class="badge bg-secondary me-1 mb-1">${sectionName}</span>`;
+        }).join('');
+    } else {
+        summaryElement.innerHTML = 'None';
+    }
+}
+
+function updatePrerequisitesSummary() {
+    const summaryElement = document.getElementById('prerequisitesSummary');
+    if (prerequisitesForNewTest.length > 0) {
+        const names = prerequisitesForNewTest.map(id => {
+            const t = allTests.find(x => x._id === id);
+            return t ? t.title : id;
+        });
+        summaryElement.innerHTML = names.map(name => `<span class="badge bg-info">${name}</span>`).join(' ');
+    } else {
+        summaryElement.innerHTML = 'None';
+    }
+}
+
+async function updateTestAssignedSections(testId, assignedSections) {
+    try {
+        const test = allTests.find(t => t._id === testId);
+        if (!test) return;
+
+        const res = await fetch(`/api/tests/${testId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...test, assignedSections })
+        });
+
+        if (!res.ok) throw new Error('Failed to update test assignment');
+        await loadInitialData();
+        alert('Section assignment updated successfully!');
+    } catch (err) {
+        console.error('Error updating section assignment:', err);
+        alert('Failed to save assignment');
+    }
+}
+
+async function updateTestPrerequisites(testId, prerequisites) {
+    try {
+        const test = allTests.find(t => t._id === testId);
+        if (!test) return;
+
+        const res = await fetch(`/api/tests/${testId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...test, prerequisites })
+        });
+
+        if (!res.ok) throw new Error('Failed to update prerequisites');
+        await loadInitialData();
+        alert('Prerequisites updated successfully!');
+    } catch (err) {
+        console.error('Error updating prerequisites:', err);
+        alert('Failed to save prerequisites');
+    }
+}
+
+// ---------- Edit Test Functions ----------
+function renderQuestionInForm(questionObj) {
+    addQuestion();
+    const container = document.getElementById('questionsContainer');
+    const qEl = container.lastElementChild;
+    if (!qEl) return;
+
+    // Get the unique question ID for this question element
+    const questionId = qEl.dataset.questionId;
+
+    // The question number will be automatically set by renumberQuestions()
+    qEl.querySelector('.question-text').value = questionObj.text || '';
+    qEl.querySelector('.question-points').value = questionObj.points || 0;
+
+    // Handle Cloudinary file URLs for question files
+    if (questionObj.files && questionObj.files.length > 0) {
+        const fileUrl = questionObj.files[0];
+        const hiddenInput = qEl.querySelector('.question-file-url');
+        const previewContainer = qEl.querySelector(`#question-preview-${questionId}`);
+        if (hiddenInput && previewContainer) {
+            hiddenInput.value = fileUrl;
+            createFilePreview(fileUrl, previewContainer, hiddenInput);
+        }
+    }
+
+    // Handle feedback when correct
+    if (questionObj.feedbackWhenCorrect) {
+        if (questionObj.feedbackWhenCorrect.text) {
+            qEl.querySelector('.feedback-correct').value = questionObj.feedbackWhenCorrect.text;
+        }
+        if (questionObj.feedbackWhenCorrect.file) {
+            const hiddenInput = qEl.querySelector('.feedback-correct-url');
+            const previewContainer = qEl.querySelector(`#feedback-correct-preview-${questionId}`);
+            if (hiddenInput && previewContainer) {
+                hiddenInput.value = questionObj.feedbackWhenCorrect.file;
+                createFilePreview(questionObj.feedbackWhenCorrect.file, previewContainer, hiddenInput);
+            }
+        }
+    }
+
+    // Handle feedback when incorrect
+    if (questionObj.feedbackWhenIncorrect) {
+        if (questionObj.feedbackWhenIncorrect.text) {
+            qEl.querySelector('.feedback-incorrect').value = questionObj.feedbackWhenIncorrect.text;
+        }
+        if (questionObj.feedbackWhenIncorrect.file) {
+            const hiddenInput = qEl.querySelector('.feedback-incorrect-url');
+            const previewContainer = qEl.querySelector(`#feedback-incorrect-preview-${questionId}`);
+            if (hiddenInput && previewContainer) {
+                hiddenInput.value = questionObj.feedbackWhenIncorrect.file;
+                createFilePreview(questionObj.feedbackWhenIncorrect.file, previewContainer, hiddenInput);
+            }
+        }
+    }
+
+    // Set question type and render appropriate answer section
+    const typeSelect = qEl.querySelector('.question-type');
+    typeSelect.value = questionObj.type || '';
+    renderAnswerSection(qEl, questionObj.type);
+
+    // Populate answer section based on question type
+    const qType = questionObj.type;
+    if (qType === 'multiple') {
+        const choicesContainer = qEl.querySelector('.choices-container');
+        if (choicesContainer) {
+            choicesContainer.innerHTML = '';
+            const choices = Array.isArray(questionObj.choices) ? questionObj.choices : [];
+            const correctAns = questionObj.correctAnswer || [];
+            
+            // Create choice inputs
+            for (let i = 0; i < choices.length; i++) {
+                const letter = String.fromCharCode(65 + i);
+                const choiceHTML = `
+                    <div class="choice-item">
+                        <div class="input-group">
+                            <span class="input-group-text">${letter}</span>
+                            <input type="text" class="form-control choice-text" placeholder="Choice ${letter}" required>
+                            <div class="input-group-text">
+                                <input class="form-check-input correct-choice" type="checkbox" value="${letter}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                choicesContainer.insertAdjacentHTML('beforeend', choiceHTML);
+            }
+            
+            // Set choice values
+            const choiceTextEls = choicesContainer.querySelectorAll('.choice-text');
+            choiceTextEls.forEach((inp, idx) => {
+                inp.value = choices[idx] || '';
+            });
+            
+            // Set correct answers
+            const correctSet = new Set(Array.isArray(correctAns) ? correctAns.map(String) : [String(correctAns)]);
+            choicesContainer.querySelectorAll('.correct-choice').forEach((cb, idx) => {
+                const letter = String.fromCharCode(65 + idx);
+                const choiceText = (choices[idx] || '').toString();
+                cb.checked = correctSet.has(letter) || correctSet.has(choiceText);
+            });
+        }
+    } else if (qType === 'truefalse') {
+        const radios = qEl.querySelectorAll('.correct-choice');
+        const correct = questionObj.correctAnswer !== undefined ? String(questionObj.correctAnswer) : null;
+        radios.forEach(r => { 
+            r.checked = (correct !== null && r.value === correct); 
+        });
+    } else if (qType === 'enumeration') {
+        const enumContainer = qEl.querySelector('.enumeration-container');
+        if (enumContainer) {
+            enumContainer.innerHTML = '';
+            const answers = Array.isArray(questionObj.answers) ? questionObj.answers : [];
+            
+            // Create answer inputs
+            answers.forEach((ans, idx) => {
+                const html = `
+                    <div class="answer-item">
+                        <div class="input-group">
+                            <input type="text" class="form-control enumeration-answer" placeholder="Answer ${idx+1}" required>
+                        </div>
+                    </div>
+                `;
+                enumContainer.insertAdjacentHTML('beforeend', html);
+            });
+            
+            // Set answer values
+            qEl.querySelectorAll('.enumeration-answer').forEach((inp, idx) => {
+                inp.value = answers[idx] || '';
+            });
+            
+            // Set required count
+            const requiredCountEl = qEl.querySelector('.enumeration-required');
+            if (requiredCountEl) {
+                requiredCountEl.value = questionObj.requiredCount || (answers.length || 1);
+            }
+        }
+    } else if (qType === 'identification') {
+        const idContainer = qEl.querySelector('.identification-container');
+        if (idContainer) {
+            idContainer.innerHTML = '';
+            const answers = Array.isArray(questionObj.answers) ? questionObj.answers : [];
+            
+            // Create answer inputs
+            answers.forEach((ans, idx) => {
+                const html = `
+                    <div class="answer-item">
+                        <div class="input-group">
+                            <input type="text" class="form-control identification-answer" placeholder="Correct Answer ${idx+1}" required>
+                        </div>
+                    </div>
+                `;
+                idContainer.insertAdjacentHTML('beforeend', html);
+            });
+            
+            // Set answer values
+            qEl.querySelectorAll('.identification-answer').forEach((inp, idx) => {
+                inp.value = answers[idx] || '';
+            });
+        }
+    } else if (qType === 'essay') {
+        const ea = qEl.querySelector('.essay-answer');
+        if (ea) {
+            ea.value = questionObj.expectedAnswer || (questionObj.answer || '');
+        }
+    }
+
+    // Reattach event handlers and update summary
+    attachQuestionHandlers();
+    attachCloudinaryHandlers(); // Add Cloudinary handlers for this question
+    updateTestSummary();
+}
+
+// Helper function to create file previews
+function createFilePreview(fileUrl, previewContainer, hiddenInput) {
+    if (!fileUrl || !previewContainer) return;
+
+    // Determine file type and create appropriate preview
+    if (fileUrl.match(/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i)) {
+        // Image file
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <img src="${fileUrl}" class="file-preview" alt="Uploaded file preview" onerror="this.style.display='none'">
+                <div class="mt-2">
+                    <small class="text-muted">Image File</small>
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-2 remove-upload" 
+                            data-url="${fileUrl}">
+                        <i class="fas fa-times me-1"></i>Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    } else if (fileUrl.match(/\.(pdf)$/i)) {
+        // PDF file
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-pdf text-danger fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>PDF Document</strong>
+                        <br>
+                        <small class="text-muted"><a href="${fileUrl}" target="_blank" class="text-decoration-none">View PDF</a></small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload" 
+                            data-url="${fileUrl}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    } else if (fileUrl.match(/\.(doc|docx)$/i)) {
+        // Word document
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-word text-primary fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>Word Document</strong>
+                        <br>
+                        <small class="text-muted"><a href="${fileUrl}" target="_blank" class="text-decoration-none">Download Document</a></small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload" 
+                            data-url="${fileUrl}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    } else if (fileUrl.match(/\.(mp4|avi|mov|wmv|flv|webm)$/i)) {
+        // Video file
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-video text-success fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>Video File</strong>
+                        <br>
+                        <small class="text-muted"><a href="${fileUrl}" target="_blank" class="text-decoration-none">View Video</a></small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload" 
+                            data-url="${fileUrl}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    } else if (fileUrl.match(/\.(mp3|wav|ogg|m4a)$/i)) {
+        // Audio file
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-audio text-info fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>Audio File</strong>
+                        <br>
+                        <small class="text-muted"><a href="${fileUrl}" target="_blank" class="text-decoration-none">Listen to Audio</a></small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload" 
+                            data-url="${fileUrl}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    } else {
+        // Generic file
+        const fileName = fileUrl.split('/').pop() || 'Uploaded File';
+        previewContainer.innerHTML = `
+            <div class="uploaded-file">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file text-secondary fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>${fileName}</strong>
+                        <br>
+                        <small class="text-muted"><a href="${fileUrl}" target="_blank" class="text-decoration-none">Download File</a></small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-upload" 
+                            data-url="${fileUrl}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Add remove functionality
+    const removeBtn = previewContainer.querySelector('.remove-upload');
+    if (removeBtn && hiddenInput) {
+        removeBtn.addEventListener('click', function() {
+            hiddenInput.value = '';
+            previewContainer.innerHTML = '';
+            updateTestSummary();
+        });
+    }
+}
+
+// Function to attach Cloudinary handlers to upload buttons
+function attachCloudinaryHandlers() {
+    document.querySelectorAll('.cloudinary-upload-btn').forEach(button => {
+        // Remove existing listeners to prevent duplicates
+        button.replaceWith(button.cloneNode(true));
+    });
+
+    // Re-attach listeners to all buttons
+    document.querySelectorAll('.cloudinary-upload-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            openCloudinaryWidget(this);
+        });
+    });
+}
+
+function getQuestionTemplate() {
+    const questionId = `question-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    return `
+    <div class="question-item" data-question-id="${questionId}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 question-number">Question TEMP</h6>
+            <button type="button" class="btn btn-danger btn-sm remove-question"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Question *</label>
+            <textarea class="form-control question-text" rows="2" required></textarea>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Type *</label>
+                <select class="form-select question-type" required>
+                    <option value="">Select</option>
+                    <option value="multiple">Multiple Choice</option>
+                    <option value="truefalse">True or False</option>
+                    <option value="enumeration">Enumeration</option>
+                    <option value="identification">Identification</option>
+                    <option value="essay">Essay</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Points *</label>
+                <input type="number" class="form-control question-points" min="1" value="1" required>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Attach Question File (Optional)</label>
+                <input type="hidden" class="cloudinary-url question-file-url" name="questionFileUrl">
+                <button type="button" class="btn btn-outline-primary w-100 cloudinary-upload-btn" 
+                        data-target="question-file-${questionId}" 
+                        data-preview="question-preview-${questionId}"
+                        data-upload-type="question">
+                    <i class="fas fa-cloud-upload-alt me-2"></i>Upload Question File
+                </button>
+                <div class="upload-preview mt-2" id="question-preview-${questionId}"></div>
+            </div>
+        </div>
+        <div class="question-answer-section"></div>
+        <div class="feedback-section">
+            <h6>Feedback Files (Optional)</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">When Correct</label>
+                    <textarea class="form-control feedback-correct" rows="2" placeholder="Text feedback when answer is correct"></textarea>
+                    <input type="hidden" class="cloudinary-url feedback-correct-url" name="feedbackCorrectFileUrl">
+                    <button type="button" class="btn btn-outline-success btn-sm mt-2 cloudinary-upload-btn"
+                            data-target="feedback-correct-${questionId}" 
+                            data-preview="feedback-correct-preview-${questionId}"
+                            data-upload-type="correctFeedback">
+                        <i class="fas fa-cloud-upload-alt me-2"></i>Upload Correct Feedback File
+                    </button>
+                    <div class="upload-preview mt-2" id="feedback-correct-preview-${questionId}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">When Incorrect</label>
+                    <textarea class="form-control feedback-incorrect" rows="2" placeholder="Text feedback when answer is incorrect"></textarea>
+                    <input type="hidden" class="cloudinary-url feedback-incorrect-url" name="feedbackIncorrectFileUrl">
+                    <button type="button" class="btn btn-outline-danger btn-sm mt-2 cloudinary-upload-btn"
+                            data-target="feedback-incorrect-${questionId}" 
+                            data-preview="feedback-incorrect-preview-${questionId}"
+                            data-upload-type="incorrectFeedback">
+                        <i class="fas fa-cloud-upload-alt me-2"></i>Upload Incorrect Feedback File
+                    </button>
+                    <div class="upload-preview mt-2" id="feedback-incorrect-preview-${questionId}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+async function openEditTest(testId) {
+    try {
+        const test = allTests.find(t => t._id === testId) || await (await fetch(`/api/tests/${testId}`)).json();
+        if (!test) { alert('Test not found'); return; }
+
+        currentTestForAssignment = testId;
+        assignedSectionsForNewTest = test.assignedSections || [];
+        prerequisitesForNewTest = test.prerequisites || [];
+
+        const form = document.getElementById('testForm');
+        form.querySelector('[name="title"]').value = test.title || '';
+        form.querySelector('[name="subjectCode"]').value = test.subjectCode || '';
+        form.querySelector('[name="description"]').value = test.description || '';
+        form.querySelector('[name="timeLimit"]').value = test.timeLimit || '';
+        form.querySelector('[name="period"]').value = test.period || '';
+        if (test.deadline) form.querySelector('[name="deadline"]').value = new Date(test.deadline).toISOString().slice(0,16);
+        form.querySelector('[name="access"]').value = test.access || 'Private';
+        form.querySelector('[name="howManyQuestions"]').value = test.howManyQuestions || 1;
+        form.querySelector('[name="passingPoints"]').value = test.passingPoints || 0;
+
+        // Update period display in summary
+        document.getElementById('periodDisplay').textContent = test.period || 'Not Selected';
+
+        updateAssignedSectionsSummary();
+        updatePrerequisitesSummary();
+
+        document.getElementById('questionsContainer').innerHTML = '';
+        questionCount = 0;
+        (Array.isArray(test.questions) ? test.questions : []).forEach(q => renderQuestionInForm(q));
+
+        const modal = new bootstrap.Modal(document.getElementById('createTestModal'));
+        modal.show();
+    } catch (err) {
+        console.error('Error opening edit modal:', err);
+        alert('Failed to open edit form: ' + (err.message || 'Unknown'));
+    }
+}
+
+// ---------- Test CRUD Operations ----------
+// In your frontend JavaScript
+async function createTest() {
+    const form = document.getElementById('testForm');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    try {
+        const formData = new FormData(form);
+        const deadlineValue = (formData.get('deadline') || '').trim();
+
+        // Build the payload with proper data
+        const payload = {
+            title: formData.get('title'),
+            subjectCode: formData.get('subjectCode'),
+            description: formData.get('description'),
+            access: formData.get('access'),
+            period: formData.get('period'), // Make sure this is included
+            timeLimit: formData.get('timeLimit') ? Number(formData.get('timeLimit')) : undefined,
+            deadline: deadlineValue ? new Date(deadlineValue).toISOString() : undefined,
+            howManyQuestions: Number(formData.get('howManyQuestions')),
+            passingPoints: Number(formData.get('passingPoints')) || 0,
+            assignedSections: currentTestForAssignment ? 
+                (allTests.find(t => t._id === currentTestForAssignment)?.assignedSections || []) : 
+                assignedSectionsForNewTest,
+            prerequisites: currentTestForAssignment ? 
+                (allTests.find(t => t._id === currentTestForAssignment)?.prerequisites || []) : 
+                prerequisitesForNewTest,
+            questions: []
+        };
+
+        // Collect questions from DOM
+        document.querySelectorAll('.question-item').forEach(q => {
+            const type = q.querySelector('.question-type')?.value;
+            if (!type) return;
+            
+            const question = {
+                text: q.querySelector('.question-text')?.value.trim(),
+                type,
+                points: Number(q.querySelector('.question-points')?.value) || 0,
+                choices: [],
+                correctAnswer: undefined,
+                answer: undefined,
+                answers: [],
+                files: [],
+                feedbackWhenCorrect: { 
+                    text: q.querySelector('.feedback-correct')?.value.trim() || '', 
+                    file: q.querySelector('input.cloudinary-url[name="feedbackCorrectFileUrl"]')?.value || '' 
+                },
+                feedbackWhenIncorrect: { 
+                    text: q.querySelector('.feedback-incorrect')?.value.trim() || '', 
+                    file: q.querySelector('input.cloudinary-url[name="feedbackIncorrectFileUrl"]')?.value || '' 
+                }
+            };
+
+            // Add question file if uploaded
+            const questionFileUrl = q.querySelector('input.cloudinary-url[name="questionFileUrl"]')?.value;
+            if (questionFileUrl) {
+                question.files.push(questionFileUrl);
+            }
+
+            if (type === 'multiple') {
+                question.choices = Array.from(q.querySelectorAll('.choice-text')).map(i => i.value.trim());
+                question.correctAnswer = Array.from(q.querySelectorAll('.correct-choice:checked')).map(c => c.value);
+            } else if (type === 'truefalse') {
+                const sel = q.querySelector('.correct-choice:checked');
+                question.correctAnswer = sel ? sel.value : undefined;
+            } else if (type === 'enumeration') {
+                question.answers = Array.from(q.querySelectorAll('.enumeration-answer')).map(a => a.value.trim());
+                question.requiredCount = Number(q.querySelector('.enumeration-required')?.value) || 1;
+            } else if (type === 'identification') {
+                question.answers = Array.from(q.querySelectorAll('.identification-answer')).map(a => a.value.trim());
+            } else if (type === 'essay') {
+                question.expectedAnswer = q.querySelector('.essay-answer')?.value.trim() || '';
+            }
+
+            payload.questions.push(question);
+        });
+
+        // Validate howManyQuestions vs total questions
+        if (payload.howManyQuestions > payload.questions.length) {
+            alert('How many questions per student cannot exceed total number of questions.');
+            return;
+        }
+
+        let res;
+        let url;
+        let method;
+
+        if (currentTestForAssignment) {
+            // Update existing test
+            url = `/api/tests/${currentTestForAssignment}`;
+            method = 'PUT';
+        } else {
+            // Create new test
+            url = '/api/tests';
+            method = 'POST';
+        }
+
+        console.log('Sending payload:', payload);
+
+        res = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error('Server response:', errorText);
+            throw new Error(`Failed to ${currentTestForAssignment ? 'update' : 'create'} test: ${res.status} ${res.statusText}`);
+        }
+
+        const result = await res.json();
+        console.log('Test saved successfully:', result);
+
+        await loadInitialData();
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('createTestModal'));
+        modal?.hide();
+        
+        // Reset form
+        form.reset();
+        document.getElementById('questionsContainer').innerHTML = '';
+        questionCount = 0;
+        assignedSectionsForNewTest = [];
+        prerequisitesForNewTest = [];
+        currentTestForAssignment = null;
+        document.getElementById('assignedSectionsSummary').innerHTML = 'None';
+        document.getElementById('prerequisitesSummary').innerHTML = 'None';
+        document.getElementById('periodDisplay').textContent = 'Not Selected';
+        
+        alert(`Test ${currentTestForAssignment ? 'updated' : 'created'} successfully!`);
+    } catch (err) {
+        console.error('Error creating/updating test:', err);
+        alert('Error creating/updating test: ' + (err.message || 'Unknown error'));
+    }
+}
+
+async function deleteTest(testId) {
+    if (!confirm('Are you sure you want to delete this test? This action cannot be undone.')) return;
+    try {
+        const res = await fetch(`/api/tests/${testId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete test');
+        await loadInitialData();
+        alert('Test deleted successfully!');
+    } catch (err) {
+        console.error('Error deleting test:', err);
+        alert('Failed to delete test');
+    }
+}
+
+async function duplicateTest(testId) {
+    try {
+        const original = allTests.find(t => t._id === testId);
+        if (!original) { alert('Original test not found'); return; }
+        const copy = JSON.parse(JSON.stringify(original));
+        delete copy._id;
+        copy.title = `${copy.title} (Copy)`;
+        copy.createdAt = new Date().toISOString();
+        copy.updatedAt = new Date().toISOString();
+
+        const res = await fetch('/api/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(copy)
+        });
+        if (!res.ok) throw new Error('Failed to duplicate test');
+        await loadInitialData();
+        alert('Test duplicated successfully!');
+    } catch (err) {
+        console.error('Error duplicating test:', err);
+        alert('Failed to duplicate test');
+    }
+}
+
+// ---------- Modal Event Handlers ----------
+document.getElementById('cancelAssignSections')?.addEventListener('click', function() {
+    bootstrap.Modal.getInstance(document.getElementById('assignSectionsModal'))?.hide();
+    bootstrap.Modal.getInstance(document.getElementById('createTestModal'))?.show();
+});
+
+document.getElementById('saveSectionAssignment')?.addEventListener('click', function() {
+    const assignedSections = Array.from(document.querySelectorAll('#assignedSections input[type="checkbox"]')).map(cb => cb.value);
+    
+    if (currentTestForAssignment) {
+        // Update existing test
+        updateTestAssignedSections(currentTestForAssignment, assignedSections);
+    } else {
+        // Store for new test
+        assignedSectionsForNewTest = assignedSections;
+        updateAssignedSectionsSummary();
+    }
+    
+    bootstrap.Modal.getInstance(document.getElementById('assignSectionsModal'))?.hide();
+    bootstrap.Modal.getInstance(document.getElementById('createTestModal'))?.show();
+});
+
+document.getElementById('cancelPrerequisites')?.addEventListener('click', function() {
+    bootstrap.Modal.getInstance(document.getElementById('prerequisitesModal'))?.hide();
+    bootstrap.Modal.getInstance(document.getElementById('createTestModal'))?.show();
+});
+
+document.getElementById('savePrerequisites')?.addEventListener('click', function() {
+    const selectedPrereqs = Array.from(document.querySelectorAll('.prerequisite-checkbox:checked')).map(cb => cb.value);
+    
+    if (currentTestForAssignment) {
+        // Update existing test
+        updateTestPrerequisites(currentTestForAssignment, selectedPrereqs);
+    } else {
+        // Store for new test
+        prerequisitesForNewTest = selectedPrereqs;
+        updatePrerequisitesSummary();
+    }
+    
+    bootstrap.Modal.getInstance(document.getElementById('prerequisitesModal'))?.hide();
+    bootstrap.Modal.getInstance(document.getElementById('createTestModal'))?.show();
+});
+
+document.getElementById('addToTest')?.addEventListener('click', function() {
+    selectedAvailableSections.forEach(sectionName => {
+        const checkbox = document.querySelector(`#availableSections input[value="${sectionName}"]`);
+        if (checkbox) {
+            const item = checkbox.closest('.student-item');
+            document.getElementById('assignedSections').appendChild(item);
+            checkbox.checked = false;
+        }
+    });
+    updateSectionSelection();
+});
+
+document.getElementById('removeFromTest')?.addEventListener('click', function() {
+    selectedAssignedSections.forEach(sectionName => {
+        const checkbox = document.querySelector(`#assignedSections input[value="${sectionName}"]`);
+        if (checkbox) {
+            const item = checkbox.closest('.student-item');
+            document.getElementById('availableSections').appendChild(item);
+            checkbox.checked = false;
+        }
+    });
+    updateSectionSelection();
+});
+    </script>
+    <script src="/js/logout.js"></script>
+</body>
+</html>

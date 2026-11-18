@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Test Bank System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f5f5f5;
+            --secondary-color: #060037;
+            --accent-color: #dcdf00;
+            --card-radius: 12px;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+            padding-top: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-body {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1400px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .center-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+        }
+        
+        .ms-sm-auto {
+            margin:0 !important;
+            width: 100%;
+        }
+        
+        /* Top Navbar Styling */
+        .top-navbar {
+            background: var(--primary-bg) !important;
+            width: 100%;
+            border-radius: var(--card-radius);
+            padding: 15px 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: fadeFromBottom 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            color: var(--secondary-color) !important;
+            font-weight: 600;
+        }
+        
+        .navbar-text {
+            color: var(--secondary-color) !important;
+        }
+        
+        /* Timer in Top Bar - Centered */
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: center;
+        }
+        
+        .timer-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        /* User Info in Top Bar */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Main Content Styling */
+        .main-content {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .section-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Card Styling */
+        .card {
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        /* Question Card Styling */
+        .question-card {
+            margin-bottom: 20px;
+            border-left: 4px solid var(--secondary-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .expired-test-alert {
+            border-left: 4px solid #ffc107;
+            background: linear-gradient(135deg, #fffbf0 0%, #fff3cd 100%);
+        }
+        
+        .test-expired-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .expired-modal {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Button Styling */
+        .btn {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #05002e;
+            border-color: #05002e;
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .top-navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .timer-container {
+                order: 2;
+                margin: 10px 0;
+            }
+        }
+
+        /* Logout Modal */
+        .logout-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .logout-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .logout-modal-header {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logout-modal-footer {
+            border-top: 1px solid #eaeaea;
+            padding-top: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Question Image Styles */
+        .question-image-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .question-image-container:hover {
+            border-color: var(--secondary-color);
+            background: #fff;
+        }
+
+        .question-image {
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .question-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* Image Modal Styles */
+        #imageModal .modal-content {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        #modalImage {
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-body">
+        <div class="center-body">
+            <!-- Top Navbar -->
+            <nav class="navbar top-navbar">
+                <a class="navbar-brand" href="/student/dashboard">
+                    <i class="fas fa-graduation-cap me-2"></i>Test Bank System
+                </a>
+                
+                <!-- Timer in the middle -->
+                <% if (!test.isExpired && test.timeLimit) { %>
+                <div class="timer-container">
+                    <div class="timer" id="timer"><%= test.timeLimit.toString().padStart(2, '0') %>:00</div>
+                    <div class="timer-label">Time Remaining</div>
+                </div>
+                <% } %>
+                
+                <!-- User Info -->
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <%= user.fullName.charAt(0).toUpperCase() %>
+                    </div>
+                    <span><%= user.fullName %></span>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 section-header">
+                    <h1 class="h2"><i class="fas fa-file-alt me-2"></i><%= test.title %></h1>
+                    <div class="btn-group">
+                        <span class="badge bg-primary fs-6"><%= test.questions.length %> Questions</span>
+                    </div>
+                </div>
+
+                <!-- Expired Test Overlay -->
+                <% if (test.isExpired) { %>
+                    <div class="test-expired-overlay">
+                        <div class="expired-modal text-center">
+                            <div class="mb-4">
+                                <i class="fas fa-clock fa-4x text-warning mb-3"></i>
+                                <h2 class="text-danger">Test Deadline Passed</h2>
+                            </div>
+                            
+                            <div class="alert alert-warning expired-test-alert text-start mb-4">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="alert-heading mb-2">This test is no longer available</h5>
+                                        <p class="mb-2"><strong>Test:</strong> <%= test.title %></p>
+                                        <p class="mb-2"><strong>Original Deadline:</strong> <%= new Date(test.deadline).toLocaleDateString() %></p>
+                                        <p class="mb-0">The submission deadline for this test has passed.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Need an Extension?</h5>
+                                    <p class="card-text">If you have a valid reason for missing the deadline, you can request an extension from your professor.</p>
+                                    
+                                    <div class="row mt-4">
+                                        <div class="col-md-6 mb-2">
+                                            <a href="mailto:<%= test.createdByEmail || 'professor@university.edu' %>?subject=Extension Request: <%= test.title %>&body=Dear Professor,%0D%0A%0D%0AI would like to request an extension for the test: <%= test.title %>.%0D%0A%0D%0AOriginal Deadline: <%= new Date(test.deadline).toLocaleDateString() %>%0D%0AStudent: <%= user.fullName %>%0D%0AStudent ID: <%= user.userID %>%0D%0A%0D%0AReason for extension request:%0D%0A%0D%0AThank you for your consideration,%0D%0A<%= user.fullName %>" 
+                                               class="btn btn-primary w-100">
+                                                <i class="fas fa-envelope me-2"></i>Email Professor
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <a href="/student/dashboard" class="btn btn-secondary w-100">
+                                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-muted">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    You will need professor approval before you can attempt this test.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0"><%= test.title %></h3>
+                        <p class="mb-0"><strong>Subject:</strong> <%= test.subjectCode %></p>
+                        <% if (test.timeLimit) { %>
+                            <p class="mb-0"><strong>Time Limit:</strong> <%= test.timeLimit %> minutes</p>
+                        <% } %>
+                        <% if (test.deadline) { %>
+                            <p class="mb-0">
+                                <strong>Deadline:</strong> <%= new Date(test.deadline).toLocaleDateString() %>
+                                <% if (test.isExpired) { %>
+                                    <span class="badge bg-warning ms-2">EXPIRED</span>
+                                <% } %>
+                            </p>
+                        <% } %>
+                    </div>
+                    <div class="card-body">
+                        <!-- Expired Test Warning (if applicable but not blocking the view) -->
+                        <% if (test.isExpired && !test.allowLateSubmission) { %>
+                            <div class="alert alert-danger">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-ban fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="alert-heading mb-1">Submission Closed</h5>
+                                        <p class="mb-0">This test cannot be submitted because the deadline has passed.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (test.description) { %>
+                            <div class="alert alert-info">
+                                <strong>Description:</strong> <%= test.description %>
+                            </div>
+                        <% } %>
+
+                        <% if (test.howManyQuestions && test.howManyQuestions < test.questions.length) { %>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-random me-2"></i>
+                                <strong>Randomized Test:</strong> This test shows <%= test.howManyQuestions %> random questions 
+                                selected from <%= test.questions.length %> total questions.
+                            </div>
+                        <% } %>
+
+                        <!-- Late Submission Warning -->
+                        <% if (test.isExpired && test.allowLateSubmission) { %>
+                            <div class="alert alert-warning">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-clock fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="alert-heading">Late Submission</h5>
+                                        <p class="mb-1">You are submitting this test after the deadline.</p>
+                                        <p class="mb-0"><strong>Original deadline:</strong> <%= new Date(test.deadline).toLocaleString() %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <form id="testForm" <%= test.isExpired && !test.allowLateSubmission ? 'style="display: none;"' : '' %>>
+                            <% test.questions.forEach((question, index) => { %>
+                            <div class="card question-card" data-question-type="<%= question.type %>">
+                                <div class="card-header">
+                                    <strong>Question <%= index + 1 %> (<%= question.type %>)</strong>
+                                    <span class="badge bg-primary float-end"><%= question.points %> point(s)</span>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><%= question.text %></p>
+    
+                                    <!-- ADD THIS SECTION TO DISPLAY QUESTION IMAGES -->
+                                    <% if (question.files && question.files.length > 0) { %>
+                                        <div class="question-images mb-3">
+                                            <div class="row g-2">
+                                                <% question.files.forEach((fileUrl, fileIndex) => { %>
+                                                    <div class="col-12 col-md-6 col-lg-4">
+                                                        <div class="question-image-container">
+                                                            <% if (fileUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)) { %>
+                                                                <!-- Display images -->
+                                                                <img src="<%= fileUrl %>" 
+                                                                    alt="Question Image <%= fileIndex + 1 %>" 
+                                                                    class="img-fluid rounded question-image"
+                                                                    style="max-height: 200px; width: auto; cursor: pointer;"
+                                                                    onclick="openImageModal('<%= fileUrl %>')">
+                                                                <div class="text-center mt-1">
+                                                                    <small class="text-muted">Image <%= fileIndex + 1 %></small>
+                                                                </div>
+                                                            <% } else if (fileUrl.match(/\.(pdf)$/i)) { %>
+                                                                <!-- Display PDF links -->
+                                                                <div class="card">
+                                                                    <div class="card-body text-center">
+                                                                        <i class="fas fa-file-pdf fa-2x text-danger mb-2"></i>
+                                                                        <p class="mb-1 small">PDF Document</p>
+                                                                        <a href="<%= fileUrl %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                            View PDF
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            <% } else { %>
+                                                                <!-- Display other file types -->
+                                                                <div class="card">
+                                                                    <div class="card-body text-center">
+                                                                        <i class="fas fa-file fa-2x text-secondary mb-2"></i>
+                                                                        <p class="mb-1 small">Supporting File</p>
+                                                                        <a href="<%= fileUrl %>" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                                                            Download
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- Display based on question type -->
+                                    <% if (question.type === 'multiple') { %>
+                                        <% question.choices.forEach((choice, choiceIndex) => { %>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" 
+                                                    name="answers[<%= index %>]" 
+                                                    id="q<%= index %>c<%= choiceIndex %>"
+                                                    value="<%= choiceIndex %>"
+                                                    <%= test.isExpired && !test.allowLateSubmission ? 'disabled' : '' %>>
+                                                <label class="form-check-label" for="q<%= index %>c<%= choiceIndex %>">
+                                                    <%= choice %>
+                                                </label>
+                                            </div>
+                                        <% }); %>
+                                    <% } else if (question.type === 'truefalse') { %>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" 
+                                                name="answers[<%= index %>]" 
+                                                id="q<%= index %>true" value="true"
+                                                <%= test.isExpired && !test.allowLateSubmission ? 'disabled' : '' %>>
+                                            <label class="form-check-label" for="q<%= index %>true">
+                                                True
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" 
+                                                name="answers[<%= index %>]" 
+                                                id="q<%= index %>false" value="false"
+                                                <%= test.isExpired && !test.allowLateSubmission ? 'disabled' : '' %>>
+                                            <label class="form-check-label" for="q<%= index %>false">
+                                                False
+                                            </label>
+                                        </div>
+                                    <% } else if (question.type === 'identification') { %>
+                                        <input type="text" class="form-control" 
+                                            name="answers[<%= index %>]" 
+                                            placeholder="Your answer..."
+                                            <%= test.isExpired && !test.allowLateSubmission ? 'disabled' : '' %>>
+                                    <% } else if (question.type === 'enumeration') { %>
+                                        <div class="alert alert-info mb-3">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <strong>Enumeration Question:</strong> Please provide <strong>all <%= question.answers.length %> answers</strong> below.
+                                        </div>
+                                        <div class="enumeration-container">
+                                            <% question.answers.forEach((_, ansIndex) => { %>
+                                                <div class="answer-item mb-2">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Answer <%= ansIndex + 1 %></span>
+                                                        <input type="text" class="form-control enumeration-answer" 
+                                                            name="answers[<%= index %>][]"
+                                                            placeholder="Enter answer <%= ansIndex + 1 %>"
+                                                            <%= test.isExpired && !test.allowLateSubmission ? 'disabled' : '' %>>
+                                                    </div>
+                                                </div>
+                                            <% }); %>
+                                        </div>
+                                    <% } else if (question.type === 'essay') { %>
+                                        <textarea class="form-control" rows="4" 
+                                                name="answers[<%= index %>]" 
+                                                placeholder="Write your essay answer here..."
+                                                <%= test.isExpired && !test.allowLateSubmission ? 'disabled' : '' %>></textarea>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% }); %>
+
+                            <div class="text-center mt-4">
+                                <% if (!test.isExpired || test.allowLateSubmission) { %>
+                                    <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                        <i class="fas fa-paper-plane me-2"></i>
+                                        <%= test.isExpired ? 'Submit Late' : 'Submit Test' %>
+                                    </button>
+                                <% } else { %>
+                                    <button type="button" class="btn btn-danger btn-lg" disabled>
+                                        <i class="fas fa-ban me-2"></i>Submission Closed
+                                    </button>
+                                <% } %>
+                                <a href="/student/dashboard" class="btn btn-secondary btn-lg ms-2">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+
+                        <!-- Show this when test is expired and no late submission allowed -->
+                        <% if (test.isExpired && !test.allowLateSubmission) { %>
+                            <div class="text-center mt-4">
+                                <div class="alert alert-warning">
+                                    <h5><i class="fas fa-clock me-2"></i>Test Expired</h5>
+                                    <p>This test is no longer accepting submissions. Please contact your professor if you need an extension.</p>
+                                    <a href="mailto:<%= test.createdByEmail || 'professor@university.edu' %>?subject=Extension Request: <%= test.title %>" 
+                                       class="btn btn-warning me-2">
+                                        <i class="fas fa-envelope me-1"></i>Request Extension
+                                    </a>
+                                    <a href="/student/dashboard" class="btn btn-primary">
+                                        <i class="fas fa-home me-1"></i>Back to Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h5 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>Confirm Logout</h5>
+            </div>
+            <div class="logout-modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLogout">Cancel</button>
+                <form action="/auth/logout" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmLogout">Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal for enlarged view -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Question Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" alt="Enlarged question image" class="img-fluid" style="max-height: 70vh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" id="downloadImage" class="btn btn-primary" download>
+                        <i class="fas fa-download me-2"></i>Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Only initialize timer if test is not expired and has time limit
+        <% if (!test.isExpired && test.timeLimit) { %>
+            console.log('⏰ Timer initialized for <%= test.timeLimit %> minutes');
+            
+            let timeLeft = <%= test.timeLimit * 60 %>; // Convert to seconds
+            const timerElement = document.getElementById('timer');
+            let timeUpAlertShown = false;
+            
+            function updateTimer() {
+                try {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    const displayText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    console.log('⏰ Timer update:', displayText, 'Time left:', timeLeft);
+                    
+                    if (timerElement) {
+                        timerElement.textContent = displayText;
+                    }
+                    
+                    // Change color when time is running low
+                    if (timeLeft <= 300 && timerElement) { // 5 minutes or less
+                        timerElement.style.color = '#dc3545';
+                        timerElement.style.fontWeight = 'bold';
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        // Time's up - submit immediately without confirmation
+                        if (!timeUpAlertShown) {
+                            timeUpAlertShown = true;
+                            console.log('⏰ Time is up! Auto-submitting test...');
+                            submitTestAuto(); // Use auto-submit function (no confirmation)
+                        }
+                        return; // Stop the timer
+                    } else {
+                        timeLeft--;
+                        setTimeout(updateTimer, 1000);
+                    }
+                } catch (error) {
+                    console.error('❌ Timer error:', error);
+                }
+            }
+            
+            // Auto-submit function (no confirmation)
+            function submitTestAuto() {
+                console.log('🚀 Auto-submitting test due to time expiration');
+                
+                try {
+                    // Disable all form inputs to prevent further changes
+                    const formInputs = document.querySelectorAll('input, textarea, select, button');
+                    formInputs.forEach(input => {
+                        input.disabled = true;
+                    });
+                    
+                    // Show auto-submission message
+                    const submitBtn = document.getElementById('submitBtn');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-clock me-2"></i>Time Expired - Auto-Submitting...';
+                        submitBtn.classList.remove('btn-success');
+                        submitBtn.classList.add('btn-secondary');
+                    }
+                    
+                    // Add a notification that test is being auto-submitted
+                    const notification = document.createElement('div');
+                    notification.className = 'alert alert-warning text-center';
+                    notification.innerHTML = `
+                        <i class="fas fa-clock me-2"></i>
+                        <strong>Time Expired:</strong> Your test is being automatically submitted...
+                    `;
+                    const cardBody = document.querySelector('.card-body');
+                    if (cardBody) {
+                        cardBody.insertBefore(notification, document.getElementById('testForm'));
+                    }
+                    
+                    // Process answers and submit
+                    const answers = processFormAnswers();
+                    
+                    // Submit the test
+                    submitTestRequest(answers);
+                } catch (error) {
+                    console.error('❌ Error in submitTestAuto:', error);
+                }
+            }
+            
+            // Helper function to process form answers
+            function processFormAnswers() {
+                const answers = [];
+                const questionElements = document.querySelectorAll('.question-card');
+                
+                questionElements.forEach((questionEl, index) => {
+                    const questionType = questionEl.dataset.questionType;
+                    
+                    if (questionType === 'enumeration') {
+                        const enumInputs = questionEl.querySelectorAll('.enumeration-answer');
+                        const enumAnswers = Array.from(enumInputs).map(input => input.value.trim()).filter(val => val !== '');
+                        answers[index] = enumAnswers.length > 0 ? enumAnswers : '';
+                    } else if (questionType === 'multiple' || questionType === 'truefalse') {
+                        const selectedRadio = questionEl.querySelector('input[type="radio"]:checked');
+                        answers[index] = selectedRadio ? selectedRadio.value : '';
+                    } else {
+                        const input = questionEl.querySelector('input[type="text"], textarea');
+                        answers[index] = input ? input.value.trim() : '';
+                    }
+                });
+                
+                return answers;
+            }
+            
+            // Separate function for actual API call
+            async function submitTestRequest(answers) {
+                try {
+                    console.log('📤 Submitting test answers...');
+                    
+                    const response = await fetch(`/student/submit-test/<%= test._id %>`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            answers: answers,
+                            isRetake: <%= typeof isRetake !== 'undefined' ? isRetake : false %>,
+                            isLateSubmission: false,
+                            isAutoSubmit: true  // Add flag for auto-submission
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        console.log('✅ Test auto-submitted successfully');
+                        // Redirect to results page
+                        window.location.href = `/student/test-results/<%= test._id %>`;
+                    } else {
+                        console.error('❌ Auto-submission failed:', result.message);
+                        // If auto-submission fails, show error and allow manual retry
+                        const errorAlert = document.createElement('div');
+                        errorAlert.className = 'alert alert-danger text-center';
+                        errorAlert.innerHTML = `
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Auto-submission failed:</strong> ${result.message}
+                            <br><button onclick="location.reload()" class="btn btn-warning btn-sm mt-2">Retry Submission</button>
+                        `;
+                        const cardBody = document.querySelector('.card-body');
+                        if (cardBody) {
+                            cardBody.insertBefore(errorAlert, document.getElementById('testForm'));
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Network error during auto-submission:', error);
+                    const errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger text-center';
+                    errorAlert.innerHTML = `
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Network error:</strong> Please check your connection and try submitting manually.
+                        <br><button onclick="manualSubmit()" class="btn btn-warning btn-sm mt-2">Submit Now</button>
+                    `;
+                    const cardBody = document.querySelector('.card-body');
+                    if (cardBody) {
+                        cardBody.insertBefore(errorAlert, document.getElementById('testForm'));
+                    }
+                }
+            }
+            
+            // Manual submit function for error recovery
+            function manualSubmit() {
+                const answers = processFormAnswers();
+                submitTestRequest(answers);
+            }
+            
+            // Start timer after a brief delay to ensure DOM is ready
+            setTimeout(() => {
+                console.log('⏰ Starting timer...');
+                updateTimer();
+            }, 100);
+            
+        <% } %>
+
+        // Form submission - FIXED VERSION FOR ENUMERATION
+        // Form submission - FIXED VERSION
+// Manual form submission (with confirmation)
+document.getElementById('testForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Check if test is expired (for late submission)
+    <% if (test.isExpired) { %>
+        const confirmMessage = 'You are submitting this test after the deadline. Are you sure you want to submit late?';
+        const submitButtonText = 'Submit Late';
+    <% } else { %>
+        const confirmMessage = 'Are you sure you want to submit your test? You cannot change your answers after submission.';
+        const submitButtonText = 'Submit Test';
+    <% } %>
+    
+    if (confirm(confirmMessage)) {
+        const answers = processFormAnswers();
+        
+        // Disable submit button to prevent double submission
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+        }
+        
+        await submitTestRequest(answers, false); // false = not auto-submit
+    }
+});
+
+// Helper function to process form answers
+function processFormAnswers() {
+    const answers = [];
+    const questionElements = document.querySelectorAll('.question-card');
+    
+    questionElements.forEach((questionEl, index) => {
+        const questionType = questionEl.dataset.questionType;
+        
+        if (questionType === 'enumeration') {
+            const enumInputs = questionEl.querySelectorAll('.enumeration-answer');
+            const enumAnswers = Array.from(enumInputs).map(input => input.value.trim()).filter(val => val !== '');
+            answers[index] = enumAnswers.length > 0 ? enumAnswers : '';
+        } else if (questionType === 'multiple' || questionType === 'truefalse') {
+            const selectedRadio = questionEl.querySelector('input[type="radio"]:checked');
+            answers[index] = selectedRadio ? selectedRadio.value : '';
+        } else {
+            const input = questionEl.querySelector('input[type="text"], textarea');
+            answers[index] = input ? input.value.trim() : '';
+        }
+    });
+    
+    return answers;
+}
+
+        // Helper function to submit test when time is up
+        function submitTest() {
+            const form = document.getElementById('testForm');
+            if (form) {
+                form.dispatchEvent(new Event('submit'));
+            }
+        }
+
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutModal = document.getElementById('logoutModal');
+            const cancelLogout = document.getElementById('cancelLogout');
+            const confirmLogout = document.getElementById('confirmLogout');
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logoutModal.style.display = 'block';
+                });
+            }
+
+            if (cancelLogout) {
+                cancelLogout.addEventListener('click', function() {
+                    logoutModal.style.display = 'none';
+                });
+            }
+
+            if (confirmLogout) {
+                confirmLogout.addEventListener('click', function() {
+                    // Clear session and prevent back button access
+                    fetch('/auth/logout', { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }
+                    }).then(() => {
+                        // Clear any cached data
+                        if (window.caches) {
+                            caches.keys().then(function(names) {
+                                for (let name of names) {
+                                    caches.delete(name);
+                                }
+                            });
+                        }
+                        
+                        // Redirect to login page
+                        window.location.href = '/login';
+                        
+                        // Prevent back navigation
+                        window.history.pushState(null, null, window.location.href);
+                        window.onpopstate = function() {
+                            window.history.go(1);
+                        };
+                    });
+                });
+            }
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === logoutModal) {
+                    logoutModal.style.display = 'none';
+                }
+            });
+        });
+
+        // Prevent keyboard shortcuts that might help cheating
+        document.addEventListener('keydown', function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                alert('This action is disabled during the test.');
+            }
+        });
+
+        // Prevent right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('Right-click is disabled during the test.');
+        });
+
+        // Image Modal Functionality
+function openImageModal(imageUrl) {
+    const modalImage = document.getElementById('modalImage');
+    const downloadLink = document.getElementById('downloadImage');
+    
+    if (modalImage && downloadLink) {
+        modalImage.src = imageUrl;
+        downloadLink.href = imageUrl;
+        
+        // Extract filename for download
+        const filename = imageUrl.split('/').pop() || 'question-image';
+        downloadLink.setAttribute('download', filename);
+        
+        // Show modal
+        const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+        imageModal.show();
+    }
+}
+
+// Add click handlers to all question images after page load
+document.addEventListener('DOMContentLoaded', function() {
+    // This will make all question images clickable for the modal
+    const questionImages = document.querySelectorAll('.question-image');
+    questionImages.forEach(img => {
+        img.style.cursor = 'pointer';
+    });
+});
+    </script>
+</body>
+</html>

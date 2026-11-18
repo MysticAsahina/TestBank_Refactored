@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Test Bank System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* PASTE THE ENTIRE CSS FROM PREVIOUS RESPONSE HERE */
+        :root {
+            --primary-bg: #f5f5f5;
+            --secondary-color: #060037;
+            --accent-color: #dcdf00;
+            --card-radius: 16px;
+            --scrollbar-color: #060037;
+        }
+        
+        body {
+            background-color: var(--primary-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+            padding-top: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-body {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 1800px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .center-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            margin-left: 5px;
+        }
+        
+        .ms-sm-auto {
+            margin:0 !important;
+            width: 100%;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            background: var(--primary-bg) !important;
+            width: 250px;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: slideInLeft 0.8s ease forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+            margin-right: 15px;
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .login-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .login-header img {
+            width: 70px;
+        }
+        
+        .login-header h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            color: var(--secondary-color);
+        }
+        
+        .login-header p {
+            font-size: 10px;
+            color: #666;
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: var(--secondary-color) !important;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(6, 0, 55, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white !important;
+        }
+
+        /* Bottom menu items styling */
+        .bottom-menu {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .bottom-menu .nav-link {
+            margin-bottom: 8px;
+        }
+        
+        /* Top Navbar Styling */
+        .top-navbar {
+            background: var(--primary-bg) !important;
+            width: 100%;
+            border-radius: var(--card-radius);
+            padding: 15px 20px;
+            box-shadow:
+                5px 5px 10px 5px rgba(0, 0, 0, 0.05),
+                inset 3px 3px 20px 0px rgba(255, 255, 255, 0.8);
+            animation: fadeFromBottom 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            margin-bottom: 20px;
+        }
+        
+        .navbar-brand {
+            color: var(--secondary-color) !important;
+            font-weight: 600;
+        }
+        
+        .navbar-text {
+            color: var(--secondary-color) !important;
+        }
+        
+        /* User Info in Top Bar */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Main Content Styling */
+        .main-content {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .section-header {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Card Styling */
+        .stat-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 4px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-primary { border-left-color: var(--secondary-color); }
+        .card-success { border-left-color: #198754; }
+        .card-warning { border-left-color: #ffc107; }
+        .card-info { border-left-color: #0dcaf0; }
+        .card-danger { border-left-color: #dc3545; }
+        .card-purple { border-left-color: #6f42c1; }
+        .card-teal { border-left-color: #20c997; }
+        .card-orange { border-left-color: #fd7e14; }
+        
+        .card {
+            border-radius: var(--card-radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: var(--card-radius) var(--card-radius) 0 0 !important;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .notification-item {
+            border-left: 3px solid;
+            transition: background-color 0.2s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .progress-thin {
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        .table {
+            border-radius: var(--card-radius);
+            overflow: hidden;
+        }
+        
+        .table th {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+        }
+        
+        .table td {
+            border-color: #f0f0f0;
+        }
+
+        /* Filter Bar Styling */
+        .filter-bar {
+            background-color: white;
+            border-radius: var(--card-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .filter-group {
+            margin-bottom: 10px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+
+        /* Custom Date Range Styling */
+        .custom-date-range {
+            display: none;
+            margin-top: 10px;
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Logout Modal */
+        .logout-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .logout-modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .logout-modal-header {
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logout-modal-footer {
+            border-top: 1px solid #eaeaea;
+            padding-top: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Stagger animations for cards */
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; }
+        .stat-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .card:nth-child(1) { animation-delay: 0.2s; }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+        .card:nth-child(4) { animation-delay: 0.5s; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+                position: static;
+                height: auto;
+            }
+            
+            .center-body {
+                margin-left: 0;
+            }
+        }
+
+        /* Additional styles for SectionDetails page */
+        .score-cell { 
+            text-align: center; 
+            position: relative;
+        }
+        
+        .score-passed { 
+            color: #198754; 
+            font-weight: bold; 
+        }
+        
+        .score-failed { 
+            color: #dc3545; 
+        }
+        
+        .score-na { 
+            color: #6c757d; 
+            font-style: italic; 
+        }
+
+        .max-score-info {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        /* NEW STYLES FOR DOWNLOAD BUTTON AND TABLE SCROLLING */
+        
+        /* Download Button Styling */
+        .download-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+        
+        .download-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .download-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .download-btn:hover {
+            background-color: #040028;
+        }
+        
+        .download-options {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            z-index: 1;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .download-options.show {
+            display: block;
+        }
+        
+        .download-option {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            width: 100%;
+            text-align: left;
+            background: none;
+        }
+        
+        .download-option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .pdf-option {
+            color: #dc3545;
+        }
+        
+        .excel-option {
+            color: #198754;
+        }
+        
+        .csv-option {
+            color: #0d6efd;
+        }
+        
+        /* Table Container with Scroll */
+        .table-container {
+            max-height: calc(100vh - 300px);
+            overflow: auto;
+            margin-bottom: 10px;
+            border-radius: var(--card-radius);
+        }
+        
+        /* Custom scrollbar styling */
+        .table-container::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-color);
+            border-radius: 10px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #040028;
+        }
+        
+        /* Hide date and percentage by default */
+        .score-date, .score-percentage {
+            display: none;
+        }
+        
+        /* Show date and percentage on hover */
+        .score-cell:hover .score-date,
+        .score-cell:hover .score-percentage {
+            display: block;
+        }
+        
+        /* Hide score details by default, show only score */
+        .score-details {
+            display: none;
+        }
+        
+        .score-cell:hover .score-details {
+            display: block;
+        }
+        
+        .score-main {
+            display: block;
+        }
+        
+        /* NEW STYLES FOR SEARCH BAR */
+        .search-container {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(6, 0, 55, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* NEW STYLES FOR SORTING */
+        .sortable-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 25px !important;
+        }
+        
+        .sort-icons {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            font-size: 0.7rem;
+        }
+        
+        .sort-icon {
+            line-height: 0.7;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .sort-icon.active {
+            color: white;
+        }
+        
+        .sort-asc .fa-sort-up {
+            color: white;
+        }
+        
+        .sort-desc .fa-sort-down {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-body">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <div class="login-header">
+                        <img src="/images/phinma_logo.png" alt="PHINMA Logo" class="me-2">
+                        <h2>PHINMA EDUCATION</h2>
+                        <p class="mb-0">MAKING LIVES BETTER THROUGH EDUCATION</p>
+                    </div>
+                    
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dean/dashboard">
+                            <i class="fas fa-home me-2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dean/sections">
+                            <i class="fas fa-layer-group me-2"></i> Sections
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dean/tests">
+                            <i class="fas fa-file-alt me-2"></i> Test Management
+                        </a>
+                    </li>
+
+                    <% if (user && user.role === "Dean") { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dean/manage-accounts">
+                            <i class="fas fa-users-cog me-2"></i> Manage Accounts
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+
+                <!-- Bottom Menu Items -->
+                <div class="bottom-menu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="center-body">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg top-navbar">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <i class="fas fa-graduation-cap me-2"></i>Test Bank System
+                    </a>
+                    <div class="navbar-nav ms-auto align-items-center">
+                        <!-- User Info (without dropdown) -->
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <%= user.fullName.charAt(0).toUpperCase() %>
+                            </div>
+                            <span><%= user.fullName %></span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-chart-bar me-2"></i><%= title %></h1>
+                    <a href="/dean/sections" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Sections
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Section Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Section:</strong> <%= section.name %>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Course:</strong> <%= section.course %>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Year Level:</strong> <%= section.yearLevel %>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>School Year:</strong> <%= section.schoolYear %>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <strong>Subject:</strong> <%= section.subject %>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Campus:</strong> <%= section.campus %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Student Test Scores</h5>
+                        <!-- Download Button -->
+                        <div class="download-section">
+                            <div class="download-dropdown">
+                                <button class="download-btn">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </button>
+                                <div class="download-options" id="downloadOptions">
+                                    <button class="download-option pdf-option" data-type="pdf">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </button>
+                                    <button class="download-option excel-option" data-type="excel">
+                                        <i class="fas fa-file-excel"></i> Excel
+                                    </button>
+                                    <button class="download-option csv-option" data-type="csv">
+                                        <i class="fas fa-file-csv"></i> CSV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <% if (tests.length === 0) { %>
+                            <p class="text-muted">No tests available for this section.</p>
+                        <% } else { %>
+                            <!-- Search Bar -->
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <input type="text" class="search-input" id="studentSearch" placeholder="Search by student name or ID...">
+                                    <i class="fas fa-search search-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="table-container">
+                                <table class="table table-striped table-bordered" id="scoresTable">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th class="sortable-header" data-sort="studentName">
+                                                Student
+                                                <div class="sort-icons">
+                                                    <i class="fas fa-sort-up sort-icon"></i>
+                                                    <i class="fas fa-sort-down sort-icon"></i>
+                                                </div>
+                                            </th>
+                                            <th class="sortable-header" data-sort="studentId">
+                                                Student ID
+                                                <div class="sort-icons">
+                                                    <i class="fas fa-sort-up sort-icon"></i>
+                                                    <i class="fas fa-sort-down sort-icon"></i>
+                                                </div>
+                                            </th>
+                                            <% tests.forEach((test, index) => { %>
+                                                <th class="text-center sortable-header" data-sort="test-<%= index %>">
+                                                    <%= test.title %>
+                                                    <br>
+                                                    <small class="text-muted"><%= test.subjectCode %></small>
+                                                    <br>
+                                                    <small class="max-score-info">
+                                                        Max: <%= test.totalPoints > 0 ? test.totalPoints + ' pts' : 'N/A' %>
+                                                    </small>
+                                                    <div class="sort-icons">
+                                                        <i class="fas fa-sort-up sort-icon"></i>
+                                                        <i class="fas fa-sort-down sort-icon"></i>
+                                                    </div>
+                                                </th>
+                                            <% }); %>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scoresTableBody">
+                                        <% section.students.forEach(student => { %>
+                                            <tr class="student-row" data-student-name="<%= student.name.toLowerCase() %>" data-student-id="<%= (student.studentId || '').toLowerCase() %>">
+                                                <td class="student-name"><%= student.name %></td>
+                                                <td class="student-id"><%= student.studentId || 'N/A' %></td>
+                                                <% tests.forEach(test => { 
+                                                    const scoreData = student.testScores[test._id];
+                                                    const maxScore = test.totalPoints || 0;
+                                                    const displayScore = maxScore > 0 ? scoreData.score + ' / ' + maxScore : scoreData.score;
+                                                    const percentage = maxScore > 0 ? ((scoreData.score / maxScore) * 100).toFixed(1) : 'N/A';
+                                                    const numericScore = scoreData && scoreData.score !== null ? scoreData.score : -1;
+                                                %>
+                                                    <td class="score-cell" data-score="<%= numericScore %>" data-percentage="<%= percentage %>">
+                                                        <% if (scoreData && scoreData.score !== null) { %>
+                                                            <span class="score-main <%= scoreData.passed ? 'score-passed' : 'score-failed' %>">
+                                                                <%= displayScore %>
+                                                            </span>
+                                                            <div class="score-details">
+                                                                <small class="score-date text-muted">
+                                                                    <%= scoreData.takenAt ? new Date(scoreData.takenAt).toLocaleDateString() : '' %>
+                                                                </small>
+                                                                <% if (maxScore > 0) { %>
+                                                                    <br>
+                                                                    <small class="score-percentage max-score-info">
+                                                                        (<%= percentage %>%)
+                                                                    </small>
+                                                                <% } %>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <span class="score-na">N/A</span>
+                                                        <% } %>
+                                                    </td>
+                                                <% }); %>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                                <div id="noResultsMessage" class="no-results" style="display: none;">
+                                    No students found matching your search.
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h5 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>Confirm Logout</h5>
+            </div>
+            <div class="logout-modal-body">
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelLogout">Cancel</button>
+                <form action="/auth/logout" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger" id="confirmLogout">Yes, Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutModal = document.getElementById('logoutModal');
+            const cancelLogout = document.getElementById('cancelLogout');
+            const confirmLogout = document.getElementById('confirmLogout');
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logoutModal.style.display = 'block';
+                });
+            }
+
+            if (cancelLogout) {
+                cancelLogout.addEventListener('click', function() {
+                    logoutModal.style.display = 'none';
+                });
+            }
+
+            if (confirmLogout) {
+                confirmLogout.addEventListener('click', function() {
+                    // Clear session and prevent back button access
+                    fetch('/auth/logout', { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }
+                    }).then(() => {
+                        // Clear any cached data
+                        if (window.caches) {
+                            caches.keys().then(function(names) {
+                                for (let name of names) {
+                                    caches.delete(name);
+                                }
+                            });
+                        }
+                        
+                        // Redirect to login page
+                        window.location.href = '/login';
+                        
+                        // Prevent back navigation
+                        window.history.pushState(null, null, window.location.href);
+                        window.onpopstate = function() {
+                            window.history.go(1);
+                        };
+                    });
+                });
+            }
+
+            // Download button functionality
+            const downloadBtn = document.querySelector('.download-btn');
+            const downloadOptions = document.getElementById('downloadOptions');
+            
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    downloadOptions.classList.toggle('show');
+                });
+            }
+            
+            // Close download options when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.download-dropdown')) {
+                    downloadOptions.classList.remove('show');
+                }
+            });
+            
+            // Handle download option selection
+            const downloadOptionsBtns = document.querySelectorAll('.download-option');
+            downloadOptionsBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.getAttribute('data-type');
+                    downloadTableData(type);
+                    downloadOptions.classList.remove('show');
+                });
+            });
+            
+            // Download table data function
+            function downloadTableData(type) {
+                const table = document.getElementById('scoresTable');
+                const sectionName = '<%= section.name %>';
+                
+                switch(type) {
+                    case 'pdf':
+                        downloadPDF(table, sectionName);
+                        break;
+                    case 'excel':
+                        downloadExcel(table, sectionName);
+                        break;
+                    case 'csv':
+                        downloadCSV(table, sectionName);
+                        break;
+                }
+            }
+            
+            // Download as PDF
+            function downloadPDF(table, sectionName) {
+                // Initialize jsPDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Set document properties
+                doc.setProperties({
+                    title: `${sectionName} - Test Scores`,
+                    subject: 'Student Test Scores Report',
+                    author: 'Test Bank System'
+                });
+                
+                // Add header
+                doc.setFontSize(16);
+                doc.setTextColor(6, 0, 55); // Secondary color
+                doc.text(`${sectionName} - Student Test Scores`, 14, 15);
+                
+                // Add date
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+                
+                // Extract table data
+                const headers = [];
+                const rows = [];
+                
+                // Get headers
+                table.querySelectorAll('thead th').forEach(th => {
+                    headers.push(th.innerText.replace(/\n/g, ' ').trim());
+                });
+                
+                // Get rows
+                table.querySelectorAll('tbody tr').forEach(tr => {
+                    const row = [];
+                    tr.querySelectorAll('td').forEach(td => {
+                        // Extract only the main score text (not date/percentage)
+                        const mainScore = td.querySelector('.score-main');
+                        if (mainScore) {
+                            row.push(mainScore.innerText.trim());
+                        } else {
+                            row.push(td.innerText.trim());
+                        }
+                    });
+                    rows.push(row);
+                });
+                
+                // Calculate column widths
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const margin = 14;
+                const availableWidth = pageWidth - (2 * margin);
+                const colCount = headers.length;
+                const colWidth = availableWidth / colCount;
+                
+                // Set table starting position
+                let yPosition = 30;
+                
+                // Create table header - ALL HEADERS WITH SAME COLOR AND FORMAT
+                doc.setFillColor(6, 0, 55); // Secondary color - DARK BLUE
+                doc.setTextColor(255, 255, 255); // WHITE TEXT
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                
+                // Draw a single header background for the entire row
+                doc.rect(margin, yPosition, availableWidth, 10, 'F');
+                
+                // Add header text for each column
+                headers.forEach((header, i) => {
+                    // Split long headers into multiple lines
+                    const maxChars = 15;
+                    if (header.length > maxChars) {
+                        const parts = [];
+                        let currentPart = '';
+                        const words = header.split(' ');
+                        
+                        for (const word of words) {
+                            if ((currentPart + ' ' + word).length <= maxChars) {
+                                currentPart += (currentPart ? ' ' : '') + word;
+                            } else {
+                                if (currentPart) parts.push(currentPart);
+                                currentPart = word;
+                            }
+                        }
+                        if (currentPart) parts.push(currentPart);
+                        
+                        parts.forEach((part, partIndex) => {
+                            doc.text(part, margin + (i * colWidth) + (colWidth / 2), yPosition + 4 + (partIndex * 3), { align: 'center' });
+                        });
+                    } else {
+                        doc.text(header, margin + (i * colWidth) + (colWidth / 2), yPosition + 5, { align: 'center' });
+                    }
+                });
+                
+                yPosition += 10;
+                
+                // Add table rows
+                doc.setTextColor(0, 0, 0);
+                doc.setFont(undefined, 'normal');
+                
+                rows.forEach((row, rowIndex) => {
+                    // Check if we need a new page
+                    if (yPosition > doc.internal.pageSize.getHeight() - 20) {
+                        doc.addPage();
+                        yPosition = 20;
+                        
+                        // Add header to new page - SAME FORMAT AS FIRST PAGE
+                        doc.setFillColor(6, 0, 55);
+                        doc.setTextColor(255, 255, 255);
+                        doc.setFont(undefined, 'bold');
+                        
+                        // Draw a single header background for the entire row
+                        doc.rect(margin, yPosition, availableWidth, 10, 'F');
+                        
+                        // Add header text for each column
+                        headers.forEach((header, i) => {
+                            doc.text(header, margin + (i * colWidth) + (colWidth / 2), yPosition + 5, { align: 'center' });
+                        });
+                        
+                        yPosition += 10;
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFont(undefined, 'normal');
+                    }
+                    
+                    // Alternate row colors for better readability
+                    if (rowIndex % 2 === 0) {
+                        doc.setFillColor(245, 245, 245); // Light gray
+                        doc.rect(margin, yPosition, availableWidth, 8, 'F');
+                    }
+                    
+                    // Add row data
+                    row.forEach((cell, cellIndex) => {
+                        doc.text(cell, margin + (cellIndex * colWidth) + 2, yPosition + 5, { maxWidth: colWidth - 4 });
+                    });
+                    
+                    yPosition += 8;
+                });
+                
+                // Add footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`Page ${i} of ${pageCount}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+                    doc.text('Test Bank System - PHINMA Education', pageWidth / 2, doc.internal.pageSize.getHeight() - 5, { align: 'center' });
+                }
+                
+                // Save the PDF
+                doc.save(`${sectionName}_test_scores.pdf`);
+            }
+            
+            // Download as Excel
+            function downloadExcel(table, sectionName) {
+                // Get table data
+                const data = [];
+                const headers = [];
+                
+                // Get headers
+                table.querySelectorAll('thead th').forEach(th => {
+                    headers.push(th.innerText.replace(/\n/g, ' ').trim());
+                });
+                data.push(headers);
+                
+                // Get rows
+                table.querySelectorAll('tbody tr').forEach(tr => {
+                    const row = [];
+                    tr.querySelectorAll('td').forEach(td => {
+                        // Extract only the main score text (not date/percentage)
+                        const mainScore = td.querySelector('.score-main');
+                        if (mainScore) {
+                            row.push(mainScore.innerText.trim());
+                        } else {
+                            row.push(td.innerText.trim());
+                        }
+                    });
+                    data.push(row);
+                });
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Scores');
+                
+                // Generate Excel file and download
+                XLSX.writeFile(wb, `${sectionName}_test_scores.xlsx`);
+            }
+            
+            // Download as CSV
+            function downloadCSV(table, sectionName) {
+                const rows = [];
+                const headers = [];
+                
+                // Get headers
+                table.querySelectorAll('thead th').forEach(th => {
+                    headers.push(`"${th.innerText.replace(/\n/g, ' ').trim()}"`);
+                });
+                rows.push(headers.join(','));
+                
+                // Get rows
+                table.querySelectorAll('tbody tr').forEach(tr => {
+                    const row = [];
+                    tr.querySelectorAll('td').forEach(td => {
+                        // Extract only the main score text (not date/percentage)
+                        const mainScore = td.querySelector('.score-main');
+                        if (mainScore) {
+                            row.push(`"${mainScore.innerText.trim()}"`);
+                        } else {
+                            row.push(`"${td.innerText.trim()}"`);
+                        }
+                    });
+                    rows.push(row.join(','));
+                });
+                
+                // Create CSV content
+                const csvContent = rows.join('\n');
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `${sectionName}_test_scores.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            // NEW: Search functionality for students
+            const studentSearch = document.getElementById('studentSearch');
+            const studentRows = document.querySelectorAll('.student-row');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            
+            if (studentSearch) {
+                studentSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    let hasVisibleRows = false;
+                    
+                    studentRows.forEach(row => {
+                        const studentName = row.getAttribute('data-student-name');
+                        const studentId = row.getAttribute('data-student-id');
+                        
+                        // Check if search term matches student name OR student ID
+                        const matches = studentName.includes(searchTerm) || studentId.includes(searchTerm);
+                        
+                        if (matches || searchTerm === '') {
+                            row.style.display = '';
+                            hasVisibleRows = true;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide no results message
+                    if (!hasVisibleRows && searchTerm !== '') {
+                        noResultsMessage.style.display = 'block';
+                    } else {
+                        noResultsMessage.style.display = 'none';
+                    }
+                });
+            }
+            
+            // NEW: Sorting functionality
+            const sortableHeaders = document.querySelectorAll('.sortable-header');
+            let currentSort = {
+                column: null,
+                direction: 'asc' // 'asc' or 'desc'
+            };
+            
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const sortType = this.getAttribute('data-sort');
+                    sortTable(sortType);
+                });
+            });
+            
+            function sortTable(sortType) {
+                const tbody = document.getElementById('scoresTableBody');
+                const rows = Array.from(tbody.querySelectorAll('.student-row'));
+                
+                // Determine sort direction
+                let sortDirection = 'asc';
+                if (currentSort.column === sortType && currentSort.direction === 'asc') {
+                    sortDirection = 'desc';
+                }
+                
+                // Update current sort
+                currentSort.column = sortType;
+                currentSort.direction = sortDirection;
+                
+                // Reset all sort icons
+                sortableHeaders.forEach(header => {
+                    header.classList.remove('sort-asc', 'sort-desc');
+                });
+                
+                // Update current header sort indicator
+                const currentHeader = document.querySelector(`.sortable-header[data-sort="${sortType}"]`);
+                currentHeader.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                
+                // Sort rows based on column type
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    if (sortType === 'studentName') {
+                        aValue = a.querySelector('.student-name').textContent.toLowerCase();
+                        bValue = b.querySelector('.student-name').textContent.toLowerCase();
+                        return sortDirection === 'asc' ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    }
+                    else if (sortType === 'studentId') {
+                        aValue = a.querySelector('.student-id').textContent.toLowerCase();
+                        bValue = b.querySelector('.student-id').textContent.toLowerCase();
+                        return sortDirection === 'asc' ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    }
+                    else if (sortType.startsWith('test-')) {
+                        // Extract test index from sortType (e.g., "test-0" -> 0)
+                        const testIndex = parseInt(sortType.split('-')[1]);
+                        const aCell = a.querySelectorAll('.score-cell')[testIndex];
+                        const bCell = b.querySelectorAll('.score-cell')[testIndex];
+                        
+                        // Get numeric score from data attribute
+                        aValue = parseFloat(aCell.getAttribute('data-score'));
+                        bValue = parseFloat(bCell.getAttribute('data-score'));
+                        
+                        // Handle N/A values (represented as -1)
+                        if (aValue === -1) aValue = sortDirection === 'asc' ? Infinity : -Infinity;
+                        if (bValue === -1) bValue = sortDirection === 'asc' ? Infinity : -Infinity;
+                        
+                        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+                    }
+                    
+                    return 0;
+                });
+                
+                // Reorder rows in the table
+                rows.forEach(row => tbody.appendChild(row));
+            }
+        });
+    </script>
+</body>
+</html>
